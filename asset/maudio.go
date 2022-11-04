@@ -1,9 +1,9 @@
 package asset
 
 import (
-	"korok.io/korok/audio/sine"
-	"strings"
 	"log"
+	"sckorok/audio/sine"
+	"strings"
 )
 
 type AudioManager struct {
@@ -28,7 +28,7 @@ func (am *AudioManager) Load(file string, stream bool) {
 		id, _ := sine.R.LoadSound(file, audioType(file), sourceType(stream))
 		rid = id
 	}
-	am.repo[file] = idCount{rid, cnt+1}
+	am.repo[file] = idCount{rid, cnt + 1}
 	log.Print("load file:", file)
 }
 
@@ -36,7 +36,7 @@ func (am *AudioManager) Load(file string, stream bool) {
 func (am *AudioManager) Unload(file string) {
 	if v, ok := am.repo[file]; ok {
 		if v.cnt > 1 {
-			am.repo[file] = idCount{v.rid, v.cnt -1}
+			am.repo[file] = idCount{v.rid, v.cnt - 1}
 		} else {
 			delete(am.repo, file)
 			sine.R.UnloadSound(v.rid)
@@ -45,7 +45,7 @@ func (am *AudioManager) Unload(file string) {
 	}
 }
 
-func (am *AudioManager) Get(file string) (id uint16, ok bool){
+func (am *AudioManager) Get(file string) (id uint16, ok bool) {
 	if v, ook := am.repo[file]; ook {
 		id = v.rid
 		ok = true
@@ -71,5 +71,3 @@ func sourceType(stream bool) sine.SourceType {
 		return sine.Static
 	}
 }
-
-
