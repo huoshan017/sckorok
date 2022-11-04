@@ -9,7 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"image"
-	"io/ioutil"
+	"io"
 	"log"
 )
 
@@ -163,13 +163,13 @@ func (tm *TextureManager) loadAtlas(img, desc string) (id uint16, at *atlas, e e
 		return
 	}
 	file, err := res.Open(desc)
-	defer file.Close()
-
 	if err != nil {
 		e = err
 		return
 	}
-	d, err := ioutil.ReadAll(file)
+	defer file.Close()
+
+	d, err := io.ReadAll(file)
 	if err != nil {
 		e = err
 		return
@@ -198,7 +198,7 @@ type atlas struct {
 		Filename string                   `json:"filename"`
 		Frame    struct{ X, Y, W, H int } `json:"frame"`
 		Rotated  bool                     `json:"rotated"`
-		Trimmed  bool                     `json:trimmed`
+		Trimmed  bool                     `json:"trimmed"`
 		Pivot    struct{ X, Y float32 }   `json:"pivot"`
 	} `json:"frames"`
 }

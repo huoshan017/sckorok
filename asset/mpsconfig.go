@@ -1,13 +1,13 @@
 package asset
 
 import (
+	"io"
 	"sckorok/asset/res"
 	"sckorok/effect"
 	"sckorok/math"
 	"sckorok/math/f32"
 
 	"encoding/json"
-	"io/ioutil"
 	"log"
 )
 
@@ -55,12 +55,12 @@ func (pcm *ParticleConfigManager) Get(file string) (res interface{}, exist bool)
 
 func (pcm *ParticleConfigManager) load(file string) (ref interface{}, err error) {
 	render, err := res.Open(file)
-	defer render.Close()
 	if err != nil {
 		return
 	}
+	defer render.Close()
 
-	data, err := ioutil.ReadAll(render)
+	data, err := io.ReadAll(render)
 	if err != nil {
 		return
 	}
@@ -77,58 +77,58 @@ func (pcm *ParticleConfigManager) load(file string) (ref interface{}, err error)
 		ref = g
 		config = &g.Config
 		g.Gravity = f32.Vec2{cfg.GravityX, cfg.GravityY}
-		g.Speed = effect.Var{cfg.Speed, cfg.SpeedVar}
+		g.Speed = effect.Var{Base: cfg.Speed, Var: cfg.SpeedVar}
 
 		ab, av := math.Radian(cfg.Angle), math.Radian(cfg.AngleVar)
-		g.Angel = effect.Var{ab, av}
+		g.Angel = effect.Var{Base: ab, Var: av}
 
-		g.RadialAcc = effect.Var{cfg.RadialAccel, cfg.RadialAccelVar}
-		g.TangentialAcc = effect.Var{cfg.TangentialAccel, cfg.TangentialAccelVar}
+		g.RadialAcc = effect.Var{Base: cfg.RadialAccel, Var: cfg.RadialAccelVar}
+		g.TangentialAcc = effect.Var{Base: cfg.TangentialAccel, Var: cfg.TangentialAccelVar}
 		g.RotationIsDir = cfg.RotationIsDir
 	} else {
 		r := effect.RadiusConfig{}
 		ref = r
 		config = &r.Config
 		r.Radius = effect.Range{
-			Start: effect.Var{cfg.StartRadius, cfg.StartRadiusVar},
-			End:   effect.Var{cfg.EndRadius, cfg.EndRadiusVar},
+			Start: effect.Var{Base: cfg.StartRadius, Var: cfg.StartRadiusVar},
+			End:   effect.Var{Base: cfg.EndRadius, Var: cfg.EndRadiusVar},
 		}
-		r.Angle = effect.Var{cfg.Angle, cfg.AngleVar}
+		r.Angle = effect.Var{Base: cfg.Angle, Var: cfg.AngleVar}
 		//r.AngleDelta = effect.Var{cfg.Angle}
 	}
 
 	// shared properties
 	config.Max = cfg.MaxParticles
 	config.Duration = cfg.Duration
-	config.Life = effect.Var{cfg.LifeSpan, cfg.LifeSpanVar}
-	config.X = effect.Var{cfg.SourcePositionX, cfg.SourcePositionVarX}
-	config.Y = effect.Var{cfg.SourcePositionY, cfg.SourcePositionVarY}
+	config.Life = effect.Var{Base: cfg.LifeSpan, Var: cfg.LifeSpanVar}
+	config.X = effect.Var{Base: cfg.SourcePositionX, Var: cfg.SourcePositionVarX}
+	config.Y = effect.Var{Base: cfg.SourcePositionY, Var: cfg.SourcePositionVarY}
 
 	// size and spin
 	config.Size = effect.Range{
-		Start: effect.Var{cfg.StartSize, cfg.StartSizeVar},
-		End:   effect.Var{cfg.EndSize, cfg.EndSizeVar},
+		Start: effect.Var{Base: cfg.StartSize, Var: cfg.StartSizeVar},
+		End:   effect.Var{Base: cfg.EndSize, Var: cfg.EndSizeVar},
 	}
 	config.Rot = effect.Range{
-		Start: effect.Var{cfg.StartSpin, cfg.StartSpinVar},
-		End:   effect.Var{cfg.EndSpin, cfg.EndSpinVar},
+		Start: effect.Var{Base: cfg.StartSpin, Var: cfg.StartSpinVar},
+		End:   effect.Var{Base: cfg.EndSpin, Var: cfg.EndSpinVar},
 	}
 	// color
 	config.R = effect.Range{
-		Start: effect.Var{cfg.StartColorRed, cfg.StartColorVarRed},
-		End:   effect.Var{cfg.EndColorRed, cfg.EndColorVarRed},
+		Start: effect.Var{Base: cfg.StartColorRed, Var: cfg.StartColorVarRed},
+		End:   effect.Var{Base: cfg.EndColorRed, Var: cfg.EndColorVarRed},
 	}
 	config.G = effect.Range{
-		Start: effect.Var{cfg.StartColorGreen, cfg.StartColorVarGreen},
-		End:   effect.Var{cfg.EndColorGreen, cfg.EndColorVarGreen},
+		Start: effect.Var{Base: cfg.StartColorGreen, Var: cfg.StartColorVarGreen},
+		End:   effect.Var{Base: cfg.EndColorGreen, Var: cfg.EndColorVarGreen},
 	}
 	config.B = effect.Range{
-		Start: effect.Var{cfg.StartColorBlue, cfg.StartColorVarBlue},
-		End:   effect.Var{cfg.EndColorBlue, cfg.EndColorVarBlue},
+		Start: effect.Var{Base: cfg.StartColorBlue, Var: cfg.StartColorVarBlue},
+		End:   effect.Var{Base: cfg.EndColorBlue, Var: cfg.EndColorVarBlue},
 	}
 	config.A = effect.Range{
-		Start: effect.Var{cfg.StartColorAlpha, cfg.StartColorVarAlpha},
-		End:   effect.Var{cfg.EndColorAlpha, cfg.EndColorVarAlpha},
+		Start: effect.Var{Base: cfg.StartColorAlpha, Var: cfg.StartColorVarAlpha},
+		End:   effect.Var{Base: cfg.EndColorAlpha, Var: cfg.EndColorVarAlpha},
 	}
 	return
 }
