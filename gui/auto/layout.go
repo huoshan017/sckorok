@@ -1,8 +1,8 @@
 package auto
 
 import (
-	"korok.io/korok/math"
-	"korok.io/korok/gui"
+	"sckorok/gui"
+	"sckorok/math"
 
 	"log"
 )
@@ -20,7 +20,7 @@ import (
 // Options is our layout-system
 
 // 当 W = 0, H = 0 的时候，按 WrapContent 的方式绘制
-type Element struct{
+type Element struct {
 	id gui.ID
 	// 相对偏移 和 大小
 	gui.Rect
@@ -49,7 +49,7 @@ type Options struct {
 	gui.Rect
 	margin
 	gravity
-	Flag    DirtyFlag // dirty flag
+	Flag DirtyFlag // dirty flag
 }
 
 // set flag
@@ -74,13 +74,13 @@ func (p *Options) Gravity(x, y float32) *Options {
 }
 
 type layout struct {
-	Cursor struct{X, Y float32}
-	
+	Cursor struct{ X, Y float32 }
+
 	// ui bound 是一直存储的，记录一些持久化的数据
-	uiElements           []Element // element uiElements
+	uiElements []Element // element uiElements
 
 	// group 是 fifo 的结构,记录动态的数据
-	groupStack           []Group // groupStack uiElements
+	groupStack []Group // groupStack uiElements
 
 	// header of group stack
 	hGroup *Group
@@ -111,7 +111,7 @@ func (lyt *layout) SetDefaultLayoutSize(w, h float32) {
 // 创建新的Layout
 func (lyt *layout) NewElement(id gui.ID) *Element {
 	ii := len(lyt.uiElements)
-	lyt.uiElements = append(lyt.uiElements, Element{id:id})
+	lyt.uiElements = append(lyt.uiElements, Element{id: id})
 	return &lyt.uiElements[ii]
 }
 
@@ -119,19 +119,21 @@ func (lyt *layout) NewElement(id gui.ID) *Element {
 func (lyt *layout) Element(id gui.ID) (bb *Element, ok bool) {
 	if size := len(lyt.uiElements); size > int(id) {
 		if bb = &lyt.uiElements[id]; bb.id == id {
-			ok = true; return
+			ok = true
+			return
 		}
 	}
 	// Linear Search
 	for i := range lyt.uiElements {
 		if bb = &lyt.uiElements[i]; bb.id == id {
-			ok = true; break
+			ok = true
+			break
 		}
 	}
 	return
 }
 
-func (lyt *layout) Dump()  {
+func (lyt *layout) Dump() {
 	log.Println("dump elemnts:", lyt.uiElements)
 	log.Println("dump group:", lyt.groupStack)
 }
@@ -180,7 +182,8 @@ func (lyt *layout) SetPadding(top, left, right, bottom float32) *layout {
 
 func (lyt *layout) BeginLayout(id gui.ID, opt *Options, xtype LayoutType) (elem *Element, ok bool) {
 	// layout element
-	spacing := lyt.spacing; lyt.spacing = 0
+	spacing := lyt.spacing
+	lyt.spacing = 0
 	elem, ok = lyt.BeginElement(id, opt)
 	lyt.spacing = spacing
 
@@ -190,7 +193,7 @@ func (lyt *layout) BeginLayout(id gui.ID, opt *Options, xtype LayoutType) (elem 
 	// group-stack has a default parent
 	// so it's safe to index
 	parent := &lyt.groupStack[ii-1]
-	lyt.groupStack = append(lyt.groupStack, Group{LayoutType:xtype, Element: elem})
+	lyt.groupStack = append(lyt.groupStack, Group{LayoutType: xtype, Element: elem})
 	lyt.hGroup = &lyt.groupStack[ii]
 
 	// stash Options state
@@ -227,14 +230,15 @@ func (lyt *layout) EndLayout() {
 	lyt.Cursor.X, lyt.Cursor.Y = g.Cursor.X, g.Cursor.Y
 
 	// 3. end layout
-	elem := &Element{Rect:gui.Rect{0, 0, v.W, v.H}}
-	spacing := lyt.spacing; lyt.spacing = 0
+	elem := &Element{Rect: gui.Rect{0, 0, v.W, v.H}}
+	spacing := lyt.spacing
+	lyt.spacing = 0
 	lyt.EndElement(elem)
 	lyt.spacing = spacing
 
 }
 
-func (lyt *layout) BeginElement(id gui.ID, opt *Options) (elem *Element, ok bool){
+func (lyt *layout) BeginElement(id gui.ID, opt *Options) (elem *Element, ok bool) {
 	if elem, ok = lyt.Element(id); !ok {
 		elem = lyt.NewElement(id)
 	} else {
@@ -244,15 +248,15 @@ func (lyt *layout) BeginElement(id gui.ID, opt *Options) (elem *Element, ok bool
 
 		// gravity
 		var (
-			group = lyt.hGroup
+			group   = lyt.hGroup
 			gravity = group.Gravity
-			extra = struct {W, H float32} {lyt.spacing*2, lyt.spacing*2}
+			extra   = struct{ W, H float32 }{lyt.spacing * 2, lyt.spacing * 2}
 		)
 
 		// Each element's property
 		if opt != nil && opt.Flag != 0 {
 			// 计算 margin 和 偏移
-			if opt.Flag & FlagMargin != 0 {
+			if opt.Flag&FlagMargin != 0 {
 				elem.margin = opt.margin
 				elem.X += elem.Left
 				elem.Y += elem.Top
@@ -262,7 +266,7 @@ func (lyt *layout) BeginElement(id gui.ID, opt *Options) (elem *Element, ok bool
 			}
 
 			// 计算大小
-			if opt.Flag & FlagSize != 0 {
+			if opt.Flag&FlagSize != 0 {
 				if opt.W > 0 {
 					elem.Rect.W = opt.W
 				}
@@ -272,7 +276,7 @@ func (lyt *layout) BeginElement(id gui.ID, opt *Options) (elem *Element, ok bool
 			}
 
 			// Overlap group's gravity
-			if opt.Flag & FlagGravity != 0 {
+			if opt.Flag&FlagGravity != 0 {
 				gravity = opt.gravity
 			}
 
@@ -297,7 +301,7 @@ func (lyt *layout) BeginElement(id gui.ID, opt *Options) (elem *Element, ok bool
 }
 
 func (lyt *layout) EndElement(elem *Element) {
-	if  elem == nil {
+	if elem == nil {
 		log.Println("====> err nil")
 	}
 	lyt.Advance(elem)
@@ -332,9 +336,9 @@ func (lyt *layout) Extend(elem *Element) {
 // 重新计算父容器的光标位置
 func (lyt *layout) Advance(elem *Element) {
 	var (
-		g, c  = lyt.hGroup, &lyt.Cursor
-		dx = elem.W + elem.Left + elem.Right + lyt.spacing// + lyt.spacing
-		dy = elem.H + elem.Top + elem.Bottom + lyt.spacing// + lyt.spacing
+		g, c = lyt.hGroup, &lyt.Cursor
+		dx   = elem.W + elem.Left + elem.Right + lyt.spacing // + lyt.spacing
+		dy   = elem.H + elem.Top + elem.Bottom + lyt.spacing // + lyt.spacing
 	)
 
 	switch g.LayoutType {
@@ -354,19 +358,20 @@ func (lyt *layout) Advance(elem *Element) {
 type Flag uint32
 
 type Group struct {
-	LayoutType; Flag
+	LayoutType
+	Flag
 	*Element
 	// 仅用来缓存...
-	Cursor struct{X, Y float32}
-	Offset struct{X, Y float32}
+	Cursor struct{ X, Y float32 }
+	Offset struct{ X, Y float32 }
 	gui.Padding
 
 	// 当前帧布局的计算变量
-	Size struct{W, H float32}
-	Gravity struct{X, Y float32}
+	Size    struct{ W, H float32 }
+	Gravity struct{ X, Y float32 }
 
 	// true if group has a predefined size
-	fixedWidth float32
+	fixedWidth  float32
 	fixedHeight float32
 }
 

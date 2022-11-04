@@ -1,16 +1,16 @@
 package frame
 
 import (
-	"korok.io/korok/gfx"
+	"sckorok/gfx"
 )
 
 // implement sprite-animation system
 
 // Frames data of Sprite Animation
 type Animation struct {
-	Name string
+	Name       string
 	Start, Len int
-	Loop bool
+	Loop       bool
 }
 
 // Sprite Animation System
@@ -28,7 +28,7 @@ type SpriteEngine struct {
 }
 
 func NewEngine() *SpriteEngine {
-	return &SpriteEngine{ names:make(map[string]int) }
+	return &SpriteEngine{names: make(map[string]int)}
 }
 
 func (eng *SpriteEngine) RequireTable(tables []interface{}) {
@@ -56,14 +56,14 @@ func (eng *SpriteEngine) NewAnimation(name string, frames []gfx.Tex2D, loop bool
 	// new animation
 	eng.data = append(eng.data, Animation{name, start, size, loop})
 	// keep mapping
-	eng.names[name] = len(eng.data)-1
+	eng.names[name] = len(eng.data) - 1
 }
 
 // 返回动画定义 - 好像并没有太大的意义
 func (eng *SpriteEngine) Animation(name string) (anim *Animation, seq []gfx.Tex2D) {
 	if ii, ok := eng.names[name]; ok {
 		anim = &eng.data[ii]
-		seq  = eng.frames[anim.Start:anim.Start+anim.Len]
+		seq = eng.frames[anim.Start : anim.Start+anim.Len]
 	}
 	return
 }
@@ -78,14 +78,14 @@ func (eng *SpriteEngine) Update(dt float32) {
 	for i := range anims {
 		if am := &anims[i]; am.running {
 			var (
-				id    = eng.names[am.define]
-				data  = eng.data[id]
+				id   = eng.names[am.define]
+				data = eng.data[id]
 			)
-			am.gfi = data.Start+int(am.frameIndex)
+			am.gfi = data.Start + int(am.frameIndex)
 			if am.dt += dt; am.dt > am.rate {
 				am.ii = am.ii + 1
 				am.dt = 0
-				frame := am.ii% data.Len
+				frame := am.ii % data.Len
 
 				// frame end
 				if frame == 0 {
@@ -101,12 +101,12 @@ func (eng *SpriteEngine) Update(dt float32) {
 				}
 
 				if am.reverse {
-					frame = data.Len-frame-1
+					frame = data.Len - frame - 1
 				}
 				// update frame index
 				am.lastFrameIndex = am.frameIndex
 				am.frameIndex = uint16(frame)
-				am.gfi = data.Start+frame
+				am.gfi = data.Start + frame
 			}
 
 			// update sprite-component

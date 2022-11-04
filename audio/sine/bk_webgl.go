@@ -14,7 +14,8 @@
 
 // vanishs 修改于github.com/hajimehoshi/oto
 
-//+build js
+//go:build js
+// +build js
 
 package sine
 
@@ -24,7 +25,7 @@ import (
 
 	"syscall/js"
 
-	"korok.io/korok/hid"
+	"sckorok/hid"
 )
 
 type driver struct {

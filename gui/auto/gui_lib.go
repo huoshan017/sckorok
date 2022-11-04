@@ -1,9 +1,9 @@
 package auto
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/gfx"
-	g "korok.io/korok/gui"
+	"sckorok/gfx"
+	g "sckorok/gui"
+	"sckorok/math/f32"
 )
 
 type LayoutMan struct {
@@ -12,7 +12,7 @@ type LayoutMan struct {
 	fallback layout
 
 	layouts map[string]*layout
-	depth int
+	depth   int
 	current *layout
 
 	// sqNum should be same for  layout and drawing
@@ -25,11 +25,11 @@ func (lm *LayoutMan) initialize() {
 	lm.layouts = make(map[string]*layout)
 }
 
-func (lm *LayoutMan) Text(id g.ID, text string, style *g.TextStyle, opt *Options)  *Element {
+func (lm *LayoutMan) Text(id g.ID, text string, style *g.TextStyle, opt *Options) *Element {
 	var (
 		elem, ready = lm.BeginElement(id, opt)
-		size f32.Vec2
-		font = style.Font
+		size        f32.Vec2
+		font        = style.Font
 	)
 	if font == nil {
 		font = lm.Context.Theme.Font
@@ -87,14 +87,13 @@ func (lm *LayoutMan) Button(id g.ID, text string, style *g.ButtonStyle, opt *Opt
 		}
 		size := style.TextStyle.Size
 		textSize := lm.CalcTextSize(text, 0, font, size)
-		extW := style.Padding.Left+style.Padding.Right
-		extH := style.Padding.Top+style.Padding.Bottom
+		extW := style.Padding.Left + style.Padding.Right
+		extH := style.Padding.Top + style.Padding.Bottom
 		elem.W, elem.H = textSize[0]+extW, textSize[1]+extH
 	}
 	lm.EndElement(elem)
 	return
 }
-
 
 func (lm *LayoutMan) renderTextClipped(text string, bb *g.Rect, style *g.TextStyle) {
 	x, y := g.Gui2Game(bb.X, bb.Y)
@@ -106,15 +105,15 @@ func (lm *LayoutMan) renderTextClipped(text string, bb *g.Rect, style *g.TextSty
 	}
 }
 
-func (lm *LayoutMan) ImageButton(id g.ID, normal, pressed gfx.Tex2D, style *g.ImageButtonStyle, opt *Options) ( event g.EventType) {
+func (lm *LayoutMan) ImageButton(id g.ID, normal, pressed gfx.Tex2D, style *g.ImageButtonStyle, opt *Options) (event g.EventType) {
 	var (
 		elem, ready = lm.BeginElement(id, opt)
-		bb = &elem.Rect
+		bb          = &elem.Rect
 	)
 	if ready {
 		event = lm.ClickEvent(id, bb)
 		var tex gfx.Tex2D
-		if event & g.EventDown != 0 {
+		if event&g.EventDown != 0 {
 			tex = pressed
 		} else {
 			tex = normal
@@ -132,15 +131,15 @@ func (lm *LayoutMan) ImageButton(id g.ID, normal, pressed gfx.Tex2D, style *g.Im
 
 // Slider 需要设定一些自定义的属性，目前没有想好如何实现，先把逻辑实现了
 // 用两种颜色来绘制
-func (lm *LayoutMan) Slider(id g.ID, value *float32, style *g.SliderStyle, opt *Options) (e g.EventType){
+func (lm *LayoutMan) Slider(id g.ID, value *float32, style *g.SliderStyle, opt *Options) (e g.EventType) {
 	var (
 		elem, ready = lm.BeginElement(id, opt)
-		bb = &elem.Rect
+		bb          = &elem.Rect
 	)
 
 	if ready {
 		// 说明滑动了，那么应该使用最新的值，而不是传入的值
-		if v, event := lm.Context.CheckSlider(id, bb); event & g.EventDragging != 0 {
+		if v, event := lm.Context.CheckSlider(id, bb); event&g.EventDragging != 0 {
 			*value = v
 			e = event
 		}
@@ -165,7 +164,8 @@ func (lm *LayoutMan) DefineLayout(name string, xt ViewType) {
 	if l, ok := lm.layouts[name]; ok {
 		lm.current = l
 	} else {
-		l := &layout{}; l.Initialize(gContext.Theme)
+		l := &layout{}
+		l.Initialize(gContext.Theme)
 		lm.layouts[name] = l
 		lm.current = l
 	}
@@ -184,7 +184,7 @@ func (lm *LayoutMan) Clear(names ...string) {
 // 计算单个UI元素
 // 如果有大小则记录出偏移和Margin
 // 否则只返回元素
-func (lm *LayoutMan) BeginElement(id g.ID, opt *Options) (elem *Element, ok bool){
+func (lm *LayoutMan) BeginElement(id g.ID, opt *Options) (elem *Element, ok bool) {
 	return lm.current.BeginElement(id, opt)
 }
 
@@ -194,7 +194,7 @@ func (lm *LayoutMan) EndElement(elem *Element) {
 }
 
 func (lm *LayoutMan) BeginLayout(id g.ID, opt *Options, xtype LayoutType) {
-	lm.depth ++
+	lm.depth++
 	if elem, ok := lm.current.BeginLayout(id, opt, xtype); ok {
 		// debug-draw
 		if g.DebugDraw {
@@ -204,7 +204,7 @@ func (lm *LayoutMan) BeginLayout(id g.ID, opt *Options, xtype LayoutType) {
 }
 
 func (lm *LayoutMan) EndLayout() {
-	lm.depth --
+	lm.depth--
 	lm.current.EndLayout()
 	if d := lm.depth; d == 0 {
 		lm.current = &lm.fallback

@@ -1,8 +1,8 @@
 package font
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/gfx/bk"
+	"sckorok/gfx/bk"
+	"sckorok/math/f32"
 
 	"image"
 	"image/color"
@@ -42,14 +42,14 @@ type Disposer interface {
 type fontAtlas struct {
 	id uint16
 
-	texWidth float32
+	texWidth  float32
 	texHeight float32
 
 	gWidth  float32 // Largest glyph width.
 	gHeight float32 // Largest glyph height.
 
 	glyphs map[rune]Glyph
-	w, h uint16
+	w, h   uint16
 
 	regions []float32
 
@@ -76,8 +76,8 @@ func (f *fontAtlas) Bounds() (float32, float32) {
 
 func (f *fontAtlas) Frame(r rune) (u1, v1, u2, v2 float32) {
 	g := f.glyphs[r]
-	u1, v1 = float32(g.X)/ f.texWidth, float32(g.Y)/ f.texHeight
-	u2, v2 = float32(g.X+g.Width)/ f.texWidth, float32(g.Y+g.Height)/ f.texHeight
+	u1, v1 = float32(g.X)/f.texWidth, float32(g.Y)/f.texHeight
+	u2, v2 = float32(g.X+g.Width)/f.texWidth, float32(g.Y+g.Height)/f.texHeight
 	return
 }
 
@@ -96,7 +96,7 @@ func (f *fontAtlas) loadTex(img *image.RGBA) error {
 	ib := img.Bounds()
 
 	// add a white pixel at (0, 0)
-	img.Set(0,0, color.White)
+	img.Set(0, 0, color.White)
 
 	f.texWidth = float32(ib.Dx())
 	f.texHeight = float32(ib.Dy())
@@ -112,13 +112,13 @@ func Wrap(font Font, text string, wrap, fontSize float32) (n int, lines string) 
 	line := make([]byte, 0, size)
 	buff := make([]byte, 0, size*2)
 	_, gh := font.Bounds()
-	scale := fontSize/gh
+	scale := fontSize / gh
 
-	for i, w := 0, 0; i < size;{
+	for i, w := 0, 0; i < size; {
 		var lineSize float32
 		var lastSpace = -1
 
-		for j := 0 ; i < size; i, j = i+w, j+w {
+		for j := 0; i < size; i, j = i+w, j+w {
 			r, width := utf8.DecodeRuneInString(text[i:])
 			w = width
 
@@ -128,7 +128,7 @@ func Wrap(font Font, text string, wrap, fontSize float32) (n int, lines string) 
 			}
 
 			line = append(line, text[i:i+w]...)
-			if g, ok :=  font.Glyph(r); ok {
+			if g, ok := font.Glyph(r); ok {
 				lineSize += float32(g.Advance) * scale
 			} else {
 				// todo fallback ?
@@ -176,7 +176,7 @@ func Wrap(font Font, text string, wrap, fontSize float32) (n int, lines string) 
 
 func CalculateTextSize(text string, font Font, fontSize float32) f32.Vec2 {
 	_, gh := font.Bounds()
-	scale := fontSize/gh
+	scale := fontSize / gh
 	size := f32.Vec2{0, fontSize}
 
 	for i, w := 0, 0; i < len(text); i += w {

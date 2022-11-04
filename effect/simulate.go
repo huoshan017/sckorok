@@ -1,13 +1,13 @@
 package effect
 
 import (
-	"korok.io/korok/gfx"
-	"korok.io/korok/math"
-	"korok.io/korok/math/f32"
+	"sckorok/gfx"
+	"sckorok/math"
+	"sckorok/math/f32"
 )
 
 type TwoColor struct {
-	One, Other f32.Vec4
+	One, Other     f32.Vec4
 	EnableGradient bool
 }
 
@@ -38,8 +38,8 @@ func (v Var) Used() bool {
 }
 
 // Random returns a value between [Base-Var/2, Base+Var/2].
-func (v Var) Random() float32{
-	return math.Random(v.Base-v.Var/2 , v.Base+v.Var/2)
+func (v Var) Random() float32 {
+	return math.Random(v.Base-v.Var/2, v.Base+v.Var/2)
 }
 
 // Range define a range between [Start, End].
@@ -105,7 +105,6 @@ type Emitter interface {
 // 基于上面的想法，还可以设计出 Updater 的概念，不同的 Updater 对粒子执行不同的
 // 行走路径，这会极大的增加粒子弹性
 type Updater interface {
-
 }
 
 // RateController is a helper struct to manage the EmitterRate.
@@ -113,22 +112,22 @@ type RateController struct {
 	warmupTime float32
 
 	// control emitter-rate
-	accTime float32
+	accTime    float32
 	threshTime float32
 
 	// lifetime
 	lifeTime float32
 	duration float32
-	stop bool
+	stop     bool
 }
 
 // Initialize init RateController with duration and emitter-rate.
 func (ctr *RateController) Initialize(du, rate float32) {
 	ctr.duration = du
 	if rate == 0 {
-		ctr.threshTime = 1.0/60
+		ctr.threshTime = 1.0 / 60
 	} else {
-		ctr.threshTime = 1.0/rate
+		ctr.threshTime = 1.0 / rate
 	}
 }
 
@@ -141,8 +140,9 @@ func (ctr *RateController) Rate(dt float32) (n int) {
 	ctr.accTime += dt
 	if ctr.accTime >= ctr.threshTime {
 		acc := ctr.accTime
-		for d := ctr.threshTime ; acc > d; {
-			acc -= d; n++
+		for d := ctr.threshTime; acc > d; {
+			acc -= d
+			n++
 		}
 		ctr.accTime = acc
 	}
@@ -174,16 +174,17 @@ type LifeController struct {
 }
 
 // GC removes dead particles from the Pool.
-func (ctr *LifeController) GC(p *Pool) (dead int){
+func (ctr *LifeController) GC(p *Pool) (dead int) {
 	i, j := int(0), int(ctr.Live-1)
 	for i <= j {
 		if ctr.Life[i] <= 0 {
-			p.Swap(i, j);j--
+			p.Swap(i, j)
+			j--
 		} else {
 			i++
 		}
 	}
-	dead = ctr.Live -i
+	dead = ctr.Live - i
 	ctr.Live = i
 	return
 }
@@ -203,10 +204,10 @@ func (ctr *VisualController) Visualize(buf []gfx.PosTexColorVertex, tex gfx.Tex2
 	rots := ctr.Rotation
 
 	// compute vbo
-	for i := 0; i < live; i ++ {
+	for i := 0; i < live; i++ {
 		vi := i << 2
 		size := size[i]
-		half := size/2
+		half := size / 2
 
 		var (
 			r = math.Clamp(ctr.Color[i][0], 0, 1)
@@ -217,14 +218,15 @@ func (ctr *VisualController) Visualize(buf []gfx.PosTexColorVertex, tex gfx.Tex2
 
 		var c uint32
 		if additive {
-			c = uint32(b*255) << 16 + uint32(g*255) << 8 + uint32(r*255)
+			c = uint32(b*255)<<16 + uint32(g*255)<<8 + uint32(r*255)
 		} else {
-			c = uint32(a*255) << 24 + uint32(b*255) << 16 + uint32(g*255) << 8 + uint32(r*255)
+			c = uint32(a*255)<<24 + uint32(b*255)<<16 + uint32(g*255)<<8 + uint32(r*255)
 		}
 		rg := tex.Region()
 
 		// Transform matrix
-		m := f32.Mat3{}; m.InitializeScale1(pose[i][0], pose[i][1], rots[i], half, half)
+		m := f32.Mat3{}
+		m.InitializeScale1(pose[i][0], pose[i][1], rots[i], half, half)
 
 		// bottom-left
 		buf[vi+0].X, buf[vi+0].Y = m.Transform(0, 0)
@@ -243,18 +245,17 @@ func (ctr *VisualController) Visualize(buf []gfx.PosTexColorVertex, tex gfx.Tex2
 
 		// top-left
 		buf[vi+3].X, buf[vi+3].Y = m.Transform(0, size)
-		buf[vi+3].U, buf[vi+3].V  = rg.X1, rg.Y2
+		buf[vi+3].U, buf[vi+3].V = rg.X1, rg.Y2
 		buf[vi+3].RGBA = c
 	}
 }
-
 
 // ParticleSimulateSystem is the system that manage ParticleComp's simulation.
 type ParticleSimulateSystem struct {
 	pst *ParticleSystemTable
 }
 
-func NewSimulationSystem () *ParticleSimulateSystem {
+func NewSimulationSystem() *ParticleSimulateSystem {
 	return &ParticleSimulateSystem{}
 }
 
@@ -271,14 +272,15 @@ func (pss *ParticleSimulateSystem) RequireTable(tables []interface{}) {
 func (pss *ParticleSimulateSystem) Initialize() {}
 
 func (pc *ParticleComp) initialize() {
-	sim := pc.sim; sim.Initialize()
+	sim := pc.sim
+	sim.Initialize()
 	if warmup, ok := sim.(WarmupController); ok && warmup.WarmTime() > 0 {
 		pc.warmup(sim, warmup.WarmTime())
 	}
 }
 
 func (*ParticleComp) warmup(sim Simulator, t float32) {
-	for dt := float32(1)/30; t > 0; t -= dt {
+	for dt := float32(1) / 30; t > 0; t -= dt {
 		sim.Simulate(dt)
 	}
 }

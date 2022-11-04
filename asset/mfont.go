@@ -1,12 +1,12 @@
 package asset
 
 import (
-	"korok.io/korok/gfx/font"
+	"sckorok/gfx/font"
 
 	"fmt"
 	"log"
 
-	"korok.io/korok/asset/res"
+	"sckorok/asset/res"
 )
 
 type FontManager struct {

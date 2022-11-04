@@ -1,9 +1,9 @@
 package effect
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/gfx"
-	"korok.io/korok/math"
+	"sckorok/gfx"
+	"sckorok/math"
+	"sckorok/math/f32"
 )
 
 // SnowSimulator can simulate snow effect.
@@ -18,14 +18,14 @@ type SnowSimulator struct {
 	deltaRot Channel_f32
 
 	// Configuration.
-	Config struct{
+	Config struct {
 		Duration, Rate float32
-		Life Var
-		Size Var
-		Color f32.Vec4
-		Position [2]Var
-		Velocity [2]Var
-		Rotation Var
+		Life           Var
+		Size           Var
+		Color          f32.Vec4
+		Position       [2]Var
+		Velocity       [2]Var
+		Rotation       Var
 	}
 }
 
@@ -39,15 +39,15 @@ func NewSnowSimulator(cap int, w, h float32) *SnowSimulator {
 
 	// config
 	sim.Config.Duration = math.MaxFloat32
-	sim.Config.Rate = float32(cap)/10
+	sim.Config.Rate = float32(cap) / 10
 	sim.Config.Life = Var{10, 4}
 	sim.Config.Color = f32.Vec4{1, 1, 1, 1}
 	sim.Config.Size = Var{6, 6}
 	sim.Config.Position[0] = Var{0, w}
-	sim.Config.Position[1] = Var{h/2, 0}
-	sim.Config.Velocity[0] = Var{-10,  20}
+	sim.Config.Position[1] = Var{h / 2, 0}
+	sim.Config.Velocity[0] = Var{-10, 20}
 	sim.Config.Velocity[1] = Var{-50, 20}
-	sim.Config.Rotation    = Var{0, 3.14/180}
+	sim.Config.Rotation = Var{0, 3.14 / 180}
 
 	return &sim
 }
@@ -86,7 +86,6 @@ func (sim *SnowSimulator) Simulate(dt float32) {
 	sim.GC(&sim.Pool)
 }
 
-
 func (sim *SnowSimulator) Size() (live, cap int) {
 	return int(sim.Live), sim.Cap
 }
@@ -103,7 +102,7 @@ func (sim *SnowSimulator) NewParticle(new int) {
 		sim.Color[i] = sim.Config.Color
 		sim.ParticleSize[i] = sim.Config.Size.Random()
 
-		f := sim.ParticleSize[i]/(sim.Config.Size.Base+sim.Config.Size.Var)
+		f := sim.ParticleSize[i] / (sim.Config.Size.Base + sim.Config.Size.Var)
 		sim.Color[i][3] = f
 		sim.Rotation[i] = sim.Config.Rotation.Random()
 

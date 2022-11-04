@@ -1,8 +1,8 @@
 package input
 
 import (
+	"sckorok/math/f32"
 	"sync"
-	"korok.io/korok/math/f32"
 )
 
 // 记录一帧之内的按键，一帧时间做多支持同时按6个按键
@@ -15,7 +15,7 @@ type SparseMap struct {
 func (m *SparseMap) Put(k Key, st bool) {
 	m.keys[m.used] = k
 	m.stat[m.used] = st
-	m.used ++
+	m.used++
 }
 
 func (m *SparseMap) Clear() {
@@ -34,13 +34,13 @@ func (m *SparseMap) Get(k Key) (st, ok bool) {
 
 type InputSystem struct {
 	buttons map[string]*button
-	axes	map[string]*VAxis
+	axes    map[string]*VAxis
 
 	// 记录每帧的按键状态
 	// 无论是用数组还是哈希，这里的实现总之要达到快速
 	// 查询一个按键的状态的效果
 	dirty SparseMap
-	mutex   sync.RWMutex
+	mutex sync.RWMutex
 
 	// 按照button排序，这样同一个Button的绑定按键是
 	// 是连续的。
@@ -48,15 +48,15 @@ type InputSystem struct {
 
 	// 触摸/鼠标, 最多支持10个手指头同时触摸
 	// 通常情况下，active < 1
-	active int
+	active        int
 	pointerButton [10]button
-	pointers [10]PointerInput
+	pointers      [10]PointerInput
 }
 
 func NewInputSystem() *InputSystem {
 	in := &InputSystem{
-		buttons:make(map[string]*button),
-		axes:make(map[string]*VAxis),
+		buttons: make(map[string]*button),
+		axes:    make(map[string]*VAxis),
 	}
 	Input = in
 	return in
@@ -163,7 +163,7 @@ func AnyKeyChanged() bool {
 	return Input.AnyKeyChanged()
 }
 
-func RegisterButton(name string, keys...Key) {
+func RegisterButton(name string, keys ...Key) {
 	Input.RegisterButton(name, keys...)
 }
 
@@ -195,6 +195,7 @@ var Input *InputSystem
 
 // mouse or finger button
 type KeyPoint int
+
 const (
 	KeyPoint1 KeyPoint = iota
 	KeyPoint2
@@ -207,4 +208,3 @@ const (
 	KeyPoint9
 	KeyPointX
 )
-

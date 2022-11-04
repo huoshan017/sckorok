@@ -1,24 +1,24 @@
 package effect
 
 import (
-	"korok.io/korok/math"
-	"korok.io/korok/math/f32"
-	"korok.io/korok/gfx"
+	"sckorok/gfx"
+	"sckorok/math"
+	"sckorok/math/f32"
 )
 
 type Config struct {
 	Max int
 
 	Duration float32
-	Rate float32 	// Number of particles per-second
+	Rate     float32 // Number of particles per-second
 
-	Life  Var
-	X, Y  Var
-	Size  Range
-	Rot   Range
+	Life Var
+	X, Y Var
+	Size Range
+	Rot  Range
 
 	R, G, B, A Range
-	Additive bool
+	Additive   bool
 }
 
 // GravityConfig used to configure the GravitySimulator.
@@ -67,7 +67,8 @@ type GravitySimulator struct {
 }
 
 func NewGravitySimulator(cfg *GravityConfig) *GravitySimulator {
-	g := &GravitySimulator{GravityConfig: cfg}; g.Cap = cfg.Max
+	g := &GravitySimulator{GravityConfig: cfg}
+	g.Cap = cfg.Max
 
 	g.Pool.AddChan(Life)
 	g.Pool.AddChan(Position, PositionStart)
@@ -148,11 +149,11 @@ func (g *GravitySimulator) newParticle(new int) {
 	cfg := g.GravityConfig
 	for i := start; i < g.Live; i++ {
 		g.Life[i] = math.Random(cfg.Life.Base, cfg.Life.Base+cfg.Life.Var)
-		invLife := 1/g.Life[i]
+		invLife := 1 / g.Life[i]
 
 		g.Position[i] = f32.Vec2{cfg.X.Random(), cfg.Y.Random()}
 		// Color
-		var red, _g, b, a  float32 = 0, 0, 0, 1
+		var red, _g, b, a float32 = 0, 0, 0, 1
 		var redd, gd, bd, ad float32
 
 		if cfg.R.Used() {
@@ -183,7 +184,7 @@ func (g *GravitySimulator) newParticle(new int) {
 
 		// velocity = speed * direction
 		a, s := cfg.Angel.Random(), cfg.Speed.Random()
-		g.velocity[i] = f32.Vec2{math.Cos(a)*s, math.Sin(a)*s}
+		g.velocity[i] = f32.Vec2{math.Cos(a) * s, math.Sin(a) * s}
 	}
 }
 

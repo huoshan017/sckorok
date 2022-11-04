@@ -1,23 +1,23 @@
 package gfx
 
 import (
-	"korok.io/korok/gfx/bk"
-	"unsafe"
 	"image/color"
+	"sckorok/gfx/bk"
+	"unsafe"
 )
 
 type Color color.RGBA
 
 var (
 	White  = Color{0xFF, 0xFF, 0xFF, 0xFF}
-	Black  = Color{0,0,0,0xFF}
-	LTGray = Color{0xCC,0xCC,0xCC, 0xFF}
+	Black  = Color{0, 0, 0, 0xFF}
+	LTGray = Color{0xCC, 0xCC, 0xCC, 0xFF}
 	Gray   = Color{0x88, 0x88, 0x88, 0xFF}
 	DKGray = Color{0x44, 0x44, 0x44, 0xFF}
 
-	Red   = Color{0xFF,0,0, 0xFF}
-	Green = Color{0,0xFF,0, 0xFF}
-	Blue  = Color{0,0,0xFF, 0xFF}
+	Red   = Color{0xFF, 0, 0, 0xFF}
+	Green = Color{0, 0xFF, 0, 0xFF}
+	Blue  = Color{0, 0, 0xFF, 0xFF}
 
 	Cyan    = Color{0, 0xFF, 0xFF, 0xFF}
 	Magenta = Color{0xFF, 00, 0xFF, 0xFF}
@@ -38,21 +38,21 @@ func U32Color(v uint32) Color {
 
 // PMAColor returns a pre-multiplied alpha Color.
 func PMAColor(r, g, b, a uint8) Color {
-	f := float32(a)/255
+	f := float32(a) / 255
 	return Color{
-		R:uint8(float32(r)*f),
-		G:uint8(float32(g)*f),
-		B:uint8(float32(b)*f),
-		A:a,
+		R: uint8(float32(r) * f),
+		G: uint8(float32(g) * f),
+		B: uint8(float32(b) * f),
+		A: a,
 	}
 }
 
-func PMAColorf(r, g, b, a float32) Color{
+func PMAColorf(r, g, b, a float32) Color {
 	return Color{
-		R:uint8(r*a*255),
-		G:uint8(g*a*255),
-		B:uint8(b*a*255),
-		A:uint8(a*255),
+		R: uint8(r * a * 255),
+		G: uint8(g * a * 255),
+		B: uint8(b * a * 255),
+		A: uint8(a * 255),
 	}
 }
 
@@ -75,12 +75,12 @@ type CompRef struct {
 }
 
 type AABB struct {
-	x, y float32
+	x, y          float32
 	width, height float32
 }
 
 func OverlapAB(a, b *AABB) bool {
-	if a.x < b.x+b.width && a.x+a.width>b.x && a.y < b.y+b.height && a.y+a.height > b.y {
+	if a.x < b.x+b.width && a.x+a.width > b.x && a.y < b.y+b.height && a.y+a.height > b.y {
 		return true
 	}
 	return false
@@ -111,14 +111,14 @@ func (b *batchId) BatchId() uint16 {
 }
 
 func PackSortId(z int16, b uint16) (sid uint32) {
-	 sid = uint32(int32(z) + 0xFFFF>>1)
-	 sid = (sid << 16) + uint32(b)
-	 return
+	sid = uint32(int32(z) + 0xFFFF>>1)
+	sid = (sid << 16) + uint32(b)
+	return
 }
 
 func UnpackSortId(sortId uint32) (z int16, b uint16) {
 	b = uint16(sortId & 0xFFFF)
-	z = int16(int32(sortId>>16)-0xFFFF>>1)
+	z = int16(int32(sortId>>16) - 0xFFFF>>1)
 	return
 }
 
@@ -137,8 +137,3 @@ type PosTexColorVertex struct {
 //
 var PosTexColorVertexSize = unsafe.Sizeof(PosTexColorVertex{})
 var UInt16Size = unsafe.Sizeof(uint16(0))
-
-
-
-
-

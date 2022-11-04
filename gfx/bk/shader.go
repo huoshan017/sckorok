@@ -1,8 +1,8 @@
 package bk
 
 import (
-	"korok.io/korok/hid/gl"
-	"korok.io/korok/math/f32"
+	"sckorok/hid/gl"
+	"sckorok/math/f32"
 
 	"fmt"
 	"log"
@@ -51,7 +51,7 @@ func (sh *Shader) BindAttributes(R *ResManager, streams []Stream) {
 				num    = int32(comp.Num)
 				xType  = g_AttrType[comp.Type]
 				offset = int(comp.Offset)
-				base   = int(stream.firstVertex)*int(bindStride)
+				base   = int(stream.firstVertex) * int(bindStride)
 			)
 
 			var norm bool
@@ -107,7 +107,7 @@ func (s *GLShader) Use() {
 	gl.UseProgram(s.Program)
 }
 
-func (s *GLShader) Create(vsh, fsh string) error{
+func (s *GLShader) Create(vsh, fsh string) error {
 	if program, err := Compile(vsh, fsh); err == nil {
 		s.Program = program
 		//gl.BindFragDataLocation(program, 0, "gl_FragColor\x00")

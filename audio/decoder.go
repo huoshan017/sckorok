@@ -1,9 +1,9 @@
 package audio
 
 import (
-	"korok.io/korok/audio/sine"
-	"korok.io/korok/audio/wav"
-	"korok.io/korok/audio/ogg"
+	"sckorok/audio/ogg"
+	"sckorok/audio/sine"
+	"sckorok/audio/wav"
 
 	"fmt"
 )

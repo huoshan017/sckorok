@@ -1,9 +1,9 @@
 package effect
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/gfx"
-	"korok.io/korok/math"
+	"sckorok/gfx"
+	"sckorok/math"
+	"sckorok/math/f32"
 )
 
 // FireSimulator can simulate the fire effect.
@@ -14,23 +14,23 @@ type FountainSimulator struct {
 	LifeController
 	VisualController
 
-	velocity Channel_v2
+	velocity   Channel_v2
 	deltaColor Channel_v4
-	deltaRot Channel_f32
+	deltaRot   Channel_f32
 
 	// Configuration.
-	Config struct{
+	Config struct {
 		Duration, Rate float32
-		Life Var
-		Size Var
-		Color TwoColor
-		Fading bool
-		Position [2]Var
-		Angle Var
-		Speed Var
-		Gravity float32
-		Rotation Var
-		Additive bool
+		Life           Var
+		Size           Var
+		Color          TwoColor
+		Fading         bool
+		Position       [2]Var
+		Angle          Var
+		Speed          Var
+		Gravity        float32
+		Rotation       Var
+		Additive       bool
 	}
 }
 
@@ -43,12 +43,12 @@ func NewFountainSimulator(cap int) *FountainSimulator {
 
 	// config
 	sim.Config.Duration = math.MaxFloat32
-	sim.Config.Rate = float32(cap)/3
+	sim.Config.Rate = float32(cap) / 3
 	sim.Config.Life = Var{3, .25}
 	sim.Config.Color = TwoColor{f32.Vec4{1, 1, 1, 1}, f32.Vec4{1, 1, 1, 1}, false}
 	sim.Config.Fading = false
 	sim.Config.Size = Var{8, 2}
-	sim.Config.Angle = Var{3.14/2, 3.14/3}
+	sim.Config.Angle = Var{3.14 / 2, 3.14 / 3}
 	sim.Config.Speed = Var{120, 20}
 	sim.Config.Rotation = Var{0, 1}
 	sim.Config.Gravity = -120
@@ -117,7 +117,7 @@ func (f *FountainSimulator) newParticle(new int) {
 		startColor := f.Config.Color.Random()
 		f.Color[i] = startColor
 		if f.Config.Fading {
-			invLife := 1/f.Life[i]
+			invLife := 1 / f.Life[i]
 			f.deltaColor[i] = f32.Vec4{
 				-startColor[0] * invLife,
 				-startColor[1] * invLife,
@@ -132,7 +132,7 @@ func (f *FountainSimulator) newParticle(new int) {
 
 		a := f.Config.Angle.Random()
 		s := f.Config.Speed.Random()
-		f.velocity[i] = f32.Vec2{math.Cos(a)*s, math.Sin(a)*s}
+		f.velocity[i] = f32.Vec2{math.Cos(a) * s, math.Sin(a) * s}
 
 		r := f.Config.Rotation.Random()
 		f.deltaRot[i] = r
@@ -142,5 +142,3 @@ func (f *FountainSimulator) newParticle(new int) {
 func (f *FountainSimulator) Visualize(buf []gfx.PosTexColorVertex, tex gfx.Tex2D) {
 	f.VisualController.Visualize(buf, tex, f.Live, f.Config.Additive)
 }
-
-

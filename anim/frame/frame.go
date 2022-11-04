@@ -1,12 +1,13 @@
 package frame
 
 import (
-	"korok.io/korok/engi"
-	"korok.io/korok/gfx"
+	"sckorok/engi"
+	"sckorok/gfx"
 )
 
 // Defines what this animation should do when it reaches the end.
 type LoopType uint8
+
 const (
 	Restart LoopType = iota
 	PingPong
@@ -78,21 +79,21 @@ func (fb *FlipbookComp) FrameIndex() (frame, lastFrame uint16) {
 
 // Sprite Animation Table
 type FlipbookTable struct {
-	comps []FlipbookComp
-	_map   map[uint32]int
+	comps      []FlipbookComp
+	_map       map[uint32]int
 	index, cap int
 }
 
 func NewFlipbookTable(cap int) *FlipbookTable {
 	return &FlipbookTable{
-		cap:cap,
-		_map:make(map[uint32]int),
+		cap:  cap,
+		_map: make(map[uint32]int),
 	}
 }
 
 func (t *FlipbookTable) NewComp(entity engi.Entity) (am *FlipbookComp) {
 	if size := len(t.comps); t.index >= size {
-		t.comps = tableResize(t.comps, size + gfx.STEP)
+		t.comps = tableResize(t.comps, size+gfx.STEP)
 	}
 	ei := entity.Index()
 	if v, ok := t._map[ei]; ok {
@@ -102,7 +103,7 @@ func (t *FlipbookTable) NewComp(entity engi.Entity) (am *FlipbookComp) {
 	am = &t.comps[t.index]
 	am.Entity = entity
 	t._map[ei] = t.index
-	t.index ++
+	t.index++
 	return
 }
 
@@ -125,7 +126,7 @@ func (t *FlipbookTable) Comp(entity engi.Entity) (sc *FlipbookComp) {
 func (t *FlipbookTable) Delete(entity engi.Entity) {
 	ei := entity.Index()
 	if v, ok := t._map[ei]; ok {
-		if tail := t.index -1; v != tail && tail > 0 {
+		if tail := t.index - 1; v != tail && tail > 0 {
 			t.comps[v] = t.comps[tail]
 			// remap index
 			tComp := &t.comps[tail]
@@ -156,7 +157,3 @@ func tableResize(slice []FlipbookComp, size int) []FlipbookComp {
 	copy(newSlice, slice)
 	return newSlice
 }
-
-
-
-

@@ -1,8 +1,8 @@
 package gfx
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/gfx/bk"
+	"sckorok/gfx/bk"
+	"sckorok/math/f32"
 
 	"unsafe"
 )
@@ -47,7 +47,7 @@ func NewMeshRender(vsh, fsh string) *MeshRender {
 			mr.umhModel = mid
 		}
 
-		if sid,_ := bk.R.AllocUniform(id, "tex\x00", bk.UniformSampler, 1); sid != bk.InvalidId {
+		if sid, _ := bk.R.AllocUniform(id, "tex\x00", bk.UniformSampler, 1); sid != bk.InvalidId {
 			mr.umhSampler0 = sid
 			bk.SetUniform(sid, unsafe.Pointer(&s0))
 		}

@@ -1,10 +1,10 @@
 package asset
 
 import (
-	"korok.io/korok/asset/res"
-	"korok.io/korok/effect"
-	"korok.io/korok/math"
-	"korok.io/korok/math/f32"
+	"sckorok/asset/res"
+	"sckorok/effect"
+	"sckorok/math"
+	"sckorok/math/f32"
 
 	"encoding/json"
 	"io/ioutil"

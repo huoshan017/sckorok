@@ -1,8 +1,8 @@
 package game
 
 import (
+	"sckorok/engi"
 	"testing"
-	"korok.io/korok/engi"
 )
 
 // Test CRUD operation for MeshTable
@@ -40,7 +40,7 @@ func TestScriptTable(t *testing.T) {
 
 	// delete 5
 	for i, e := range eList {
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			st.Delete(e)
 		}
 	}
@@ -51,7 +51,7 @@ func TestScriptTable(t *testing.T) {
 
 	// test left
 	for i, e := range eList {
-		if i % 2 == 1 {
+		if i%2 == 1 {
 			if comp := st.Comp(e); comp == nil || comp.Entity != e {
 				t.Error("fail to keep entity:", e)
 			}
@@ -61,7 +61,6 @@ func TestScriptTable(t *testing.T) {
 			}
 		}
 	}
-
 
 }
 
@@ -86,7 +85,7 @@ func TestScripTableResize(t *testing.T) {
 	}
 
 	if size, _ := st.Size(); size != (len(list30) + len(list100)) {
-		t.Errorf("fail to create Comps: %d/%d", size, len(list30) + len(list100))
+		t.Errorf("fail to create Comps: %d/%d", size, len(list30)+len(list100))
 	}
 
 	list := append(list100, list30...)
@@ -96,8 +95,6 @@ func TestScripTableResize(t *testing.T) {
 		}
 	}
 }
-
-
 
 // Test CRUD operation for MeshTable
 func TestTagTable(t *testing.T) {
@@ -134,7 +131,7 @@ func TestTagTable(t *testing.T) {
 
 	// delete 5
 	for i, e := range eList {
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			st.Delete(e)
 		}
 	}
@@ -145,7 +142,7 @@ func TestTagTable(t *testing.T) {
 
 	// test left
 	for i, e := range eList {
-		if i % 2 == 1 {
+		if i%2 == 1 {
 			if comp := st.Comp(e); comp == nil || comp.Entity != e {
 				t.Error("fail to keep entity:", e)
 			}
@@ -155,7 +152,6 @@ func TestTagTable(t *testing.T) {
 			}
 		}
 	}
-
 
 }
 
@@ -180,7 +176,7 @@ func TestTagTableResize(t *testing.T) {
 	}
 
 	if size, _ := st.Size(); size != (len(list30) + len(list100)) {
-		t.Errorf("fail to create Comps: %d/%d", size, len(list30) + len(list100))
+		t.Errorf("fail to create Comps: %d/%d", size, len(list30)+len(list100))
 	}
 
 	list := append(list100, list30...)

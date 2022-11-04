@@ -1,17 +1,19 @@
 package gui
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/math"
-	"korok.io/korok/gfx/bk"
-	"korok.io/korok/gfx/font"
+	"sckorok/gfx/bk"
+	"sckorok/gfx/font"
+	"sckorok/math"
+	"sckorok/math/f32"
 )
 
 type DrawListFlags uint32
+
 const (
 	FlagAntiAliasedLine DrawListFlags = iota
 	FlagAntiAliasedFill
 )
+
 // Rounding corner:
 // A: 0x0000 0001 top-left
 // B: 0x0000 0002 top-right
@@ -32,30 +34,30 @@ type Align uint32
 
 const (
 	AlignCenter Align = iota
-	AlignLeft		  = 1 << iota
-	AlignRight		  = 1 << iota
-	AlignTop 		  = 1 << iota
-	AlignBottom		  = 1 << iota
+	AlignLeft         = 1 << iota
+	AlignRight        = 1 << iota
+	AlignTop          = 1 << iota
+	AlignBottom       = 1 << iota
 )
 
 const (
-	DefaultZOrder = int16(0xFFFF>>1-100)
+	DefaultZOrder = int16(0xFFFF>>1 - 100)
 )
 
 // DrawList provide method to write primitives to buffer
 type DrawCmd struct {
 	FirstIndex uint16
-	ElemCount uint16
-	ClipRect f32.Vec4
-	TextureId uint16
-	zOrder int16
+	ElemCount  uint16
+	ClipRect   f32.Vec4
+	TextureId  uint16
+	zOrder     int16
 }
 
 type DrawIdx uint16
 
 type DrawVert struct {
-	xy f32.Vec2
-	uv  f32.Vec2
+	xy    f32.Vec2
+	uv    f32.Vec2
 	color uint32
 }
 
@@ -65,31 +67,30 @@ type DrawList struct {
 	VtxBuffer []DrawVert
 
 	cmdIndex, idxIndex, vtxIndex int
-	cmdCap, idxCap, vtxCap int
+	cmdCap, idxCap, vtxCap       int
 
 	// Data *DrawListSharedData
-	OwnerName string // 窗口名
-	VtxCurrentIdx int // VtxBuffer.Size
+	OwnerName     string // 窗口名
+	VtxCurrentIdx int    // VtxBuffer.Size
 
 	// 指向当前正在使用的 cmdbuffer 的位置
 	VtxWriter []DrawVert
 	IdxWriter []DrawIdx
 
-	ClipRectStack[]f32.Vec4
+	ClipRectStack  []f32.Vec4
 	TextureIdStack []uint16
 
 	// path
-	path [64]f32.Vec2
+	path     [64]f32.Vec2
 	pathUsed int
 
-
-	FullScreen f32.Vec4
+	FullScreen      f32.Vec4
 	TexUVWhitePixel f32.Vec2
-	CircleVtx12 [12]f32.Vec2
-	Font font.Font
-	FontSize float32
+	CircleVtx12     [12]f32.Vec2
+	Font            font.Font
+	FontSize        float32
 
-	Flags DrawListFlags
+	Flags  DrawListFlags
 	ZOrder int16
 }
 
@@ -109,8 +110,8 @@ func (dl *DrawList) Initialize() {
 
 	// TODO bake circle vertex!!
 	for i := 0; i < 12; i++ {
-		sin := math.Sin((6.28/12)*float32(i))
-		cos := math.Cos((6.28/12)*float32(i))
+		sin := math.Sin((6.28 / 12) * float32(i))
+		cos := math.Cos((6.28 / 12) * float32(i))
 		dl.CircleVtx12[i] = f32.Vec2{cos, sin}
 	}
 	dl.ZOrder = DefaultZOrder
@@ -151,16 +152,15 @@ func (dl *DrawList) PathLineToMergeDuplicate(pos f32.Vec2) {
 }
 
 func (dl *DrawList) PathFillConvex(col uint32) {
-	dl.AddConvexPolyFilled(dl.path[:dl.pathUsed], col);
+	dl.AddConvexPolyFilled(dl.path[:dl.pathUsed], col)
 	dl.pathUsed = 0
 }
 
 // default: thickness=1.0
-func (dl *DrawList) PathStroke(color uint32, thickness float32, closed bool)  {
+func (dl *DrawList) PathStroke(color uint32, thickness float32, closed bool) {
 	dl.AddPolyLine(dl.path[:dl.pathUsed], color, thickness, closed)
 	dl.PathClear()
 }
-
 
 func (dl *DrawList) CurrentClipRect() (clip f32.Vec4) {
 	if n := len(dl.ClipRectStack); n > 0 {
@@ -190,7 +190,7 @@ func (dl *DrawList) UpdateTextureId() {
 // Clip 相关的操作
 func (dl *DrawList) PushClipRect(min, max f32.Vec2, intersectCurrentClip bool) {
 	cr := f32.Vec4{min[0], min[1], max[0], max[1]}
-	if intersectCurrentClip && len(dl.ClipRectStack) > 0{
+	if intersectCurrentClip && len(dl.ClipRectStack) > 0 {
 		current := dl.ClipRectStack[len(dl.ClipRectStack)-1]
 		if cr[0] < current[0] {
 			cr[0] = current[0]
@@ -225,11 +225,11 @@ func (dl *DrawList) PopClipRect() {
 }
 
 func (dl *DrawList) GetClipRectMin() f32.Vec2 {
-	return f32.Vec2{0, 0 }
+	return f32.Vec2{0, 0}
 }
 
 func (dl *DrawList) GetClipRectMax() f32.Vec2 {
-	return f32.Vec2{0, 0 }
+	return f32.Vec2{0, 0}
 }
 
 func (dl *DrawList) PushTextureId(texId uint16) {
@@ -254,8 +254,8 @@ func (dl *DrawList) PrimReserve(idxCount, vtxCount int) {
 		copy(idxBuffer, dl.IdxBuffer)
 		dl.IdxBuffer = idxBuffer
 	}
-	dl.VtxWriter = dl.VtxBuffer[dl.vtxIndex:dl.vtxIndex+vtxCount]
-	dl.IdxWriter = dl.IdxBuffer[dl.idxIndex:dl.idxIndex+idxCount]
+	dl.VtxWriter = dl.VtxBuffer[dl.vtxIndex : dl.vtxIndex+vtxCount]
+	dl.IdxWriter = dl.IdxBuffer[dl.idxIndex : dl.idxIndex+idxCount]
 }
 
 func (dl *DrawList) PrimRect(min, max f32.Vec2, color uint32) {
@@ -266,13 +266,13 @@ func (dl *DrawList) PrimRect(min, max f32.Vec2, color uint32) {
 	dl.VtxWriter[2] = DrawVert{c, uv, color}
 	dl.VtxWriter[3] = DrawVert{d, uv, color}
 
-	dl.IdxWriter[0] = DrawIdx(dl.vtxIndex+0)
-	dl.IdxWriter[1] = DrawIdx(dl.vtxIndex+1)
-	dl.IdxWriter[2] = DrawIdx(dl.vtxIndex+2)
+	dl.IdxWriter[0] = DrawIdx(dl.vtxIndex + 0)
+	dl.IdxWriter[1] = DrawIdx(dl.vtxIndex + 1)
+	dl.IdxWriter[2] = DrawIdx(dl.vtxIndex + 2)
 
-	dl.IdxWriter[3] = DrawIdx(dl.vtxIndex+0)
-	dl.IdxWriter[4] = DrawIdx(dl.vtxIndex+2)
-	dl.IdxWriter[5] = DrawIdx(dl.vtxIndex+3)
+	dl.IdxWriter[3] = DrawIdx(dl.vtxIndex + 0)
+	dl.IdxWriter[4] = DrawIdx(dl.vtxIndex + 2)
+	dl.IdxWriter[5] = DrawIdx(dl.vtxIndex + 3)
 
 	dl.vtxIndex += 4
 	dl.idxIndex += 6
@@ -288,18 +288,18 @@ func (dl *DrawList) PrimRectUV(a, c f32.Vec2, uva, uvc f32.Vec2, color uint32) {
 	dl.VtxWriter[3] = DrawVert{d, uvd, color}
 
 	ii := dl.vtxIndex
-	dl.IdxWriter[0] = DrawIdx(ii+0)
-	dl.IdxWriter[1] = DrawIdx(ii+1)
-	dl.IdxWriter[2] = DrawIdx(ii+2)
-	dl.IdxWriter[3] = DrawIdx(ii+0)
-	dl.IdxWriter[4] = DrawIdx(ii+2)
-	dl.IdxWriter[5] = DrawIdx(ii+3)
+	dl.IdxWriter[0] = DrawIdx(ii + 0)
+	dl.IdxWriter[1] = DrawIdx(ii + 1)
+	dl.IdxWriter[2] = DrawIdx(ii + 2)
+	dl.IdxWriter[3] = DrawIdx(ii + 0)
+	dl.IdxWriter[4] = DrawIdx(ii + 2)
+	dl.IdxWriter[5] = DrawIdx(ii + 3)
 
 	dl.idxIndex += 6
 	dl.vtxIndex += 4
 }
 
-func (dl *DrawList) PrimQuadUV(a, b, c, d f32.Vec2, uva, uvb,uvc, uvd f32.Vec2, color uint32) {
+func (dl *DrawList) PrimQuadUV(a, b, c, d f32.Vec2, uva, uvb, uvc, uvd f32.Vec2, color uint32) {
 	// vertex
 	dl.VtxWriter[0] = DrawVert{a, uva, color}
 	dl.VtxWriter[1] = DrawVert{b, uvb, color}
@@ -307,12 +307,12 @@ func (dl *DrawList) PrimQuadUV(a, b, c, d f32.Vec2, uva, uvb,uvc, uvd f32.Vec2, 
 	dl.VtxWriter[3] = DrawVert{d, uvd, color}
 
 	ii := dl.vtxIndex
-	dl.IdxWriter[0] = DrawIdx(ii+0)
-	dl.IdxWriter[1] = DrawIdx(ii+1)
-	dl.IdxWriter[2] = DrawIdx(ii+2)
-	dl.IdxWriter[3] = DrawIdx(ii+0)
-	dl.IdxWriter[4] = DrawIdx(ii+2)
-	dl.IdxWriter[5] = DrawIdx(ii+3)
+	dl.IdxWriter[0] = DrawIdx(ii + 0)
+	dl.IdxWriter[1] = DrawIdx(ii + 1)
+	dl.IdxWriter[2] = DrawIdx(ii + 2)
+	dl.IdxWriter[3] = DrawIdx(ii + 0)
+	dl.IdxWriter[4] = DrawIdx(ii + 2)
+	dl.IdxWriter[5] = DrawIdx(ii + 3)
 
 	dl.vtxIndex += 4
 	dl.idxIndex += 6
@@ -335,7 +335,7 @@ func (dl *DrawList) AddPolyLine(points []f32.Vec2, color uint32, thickness float
 	vtxCount := count * 4
 	dl.PrimReserve(idxCount, vtxCount)
 
-	for i1 := 0; i1 < count; i1 ++{
+	for i1 := 0; i1 < count; i1++ {
 		i2 := i1 + 1
 		if i2 == pointsCount {
 			i2 = 0
@@ -349,19 +349,19 @@ func (dl *DrawList) AddPolyLine(points []f32.Vec2, color uint32, thickness float
 		dx := diff[0] * (thickness * 0.5)
 		dy := diff[1] * (thickness * 0.5)
 
-		vi := i1*4
-		dl.VtxWriter[vi+0] = DrawVert{f32.Vec2{p1[0]+dy, p1[1]-dx}, uv, color}
-		dl.VtxWriter[vi+1] = DrawVert{f32.Vec2{p2[0]+dy, p2[1]-dx}, uv, color}
-		dl.VtxWriter[vi+2] = DrawVert{f32.Vec2{p2[0]-dy, p2[1]+dx}, uv, color}
-		dl.VtxWriter[vi+3] = DrawVert{f32.Vec2{p1[0]-dy, p1[1]+dx}, uv, color}
+		vi := i1 * 4
+		dl.VtxWriter[vi+0] = DrawVert{f32.Vec2{p1[0] + dy, p1[1] - dx}, uv, color}
+		dl.VtxWriter[vi+1] = DrawVert{f32.Vec2{p2[0] + dy, p2[1] - dx}, uv, color}
+		dl.VtxWriter[vi+2] = DrawVert{f32.Vec2{p2[0] - dy, p2[1] + dx}, uv, color}
+		dl.VtxWriter[vi+3] = DrawVert{f32.Vec2{p1[0] - dy, p1[1] + dx}, uv, color}
 
-		ii := i1*6
-		dl.IdxWriter[ii+0] = DrawIdx(dl.vtxIndex+0)
-		dl.IdxWriter[ii+1] = DrawIdx(dl.vtxIndex+1)
-		dl.IdxWriter[ii+2] = DrawIdx(dl.vtxIndex+2)
-		dl.IdxWriter[ii+3] = DrawIdx(dl.vtxIndex+0)
-		dl.IdxWriter[ii+4] = DrawIdx(dl.vtxIndex+2)
-		dl.IdxWriter[ii+5] = DrawIdx(dl.vtxIndex+3)
+		ii := i1 * 6
+		dl.IdxWriter[ii+0] = DrawIdx(dl.vtxIndex + 0)
+		dl.IdxWriter[ii+1] = DrawIdx(dl.vtxIndex + 1)
+		dl.IdxWriter[ii+2] = DrawIdx(dl.vtxIndex + 2)
+		dl.IdxWriter[ii+3] = DrawIdx(dl.vtxIndex + 0)
+		dl.IdxWriter[ii+4] = DrawIdx(dl.vtxIndex + 2)
+		dl.IdxWriter[ii+5] = DrawIdx(dl.vtxIndex + 3)
 
 		dl.vtxIndex += 4
 		dl.idxIndex += 6
@@ -374,7 +374,7 @@ func (dl *DrawList) AddConvexPolyFilled(points []f32.Vec2, color uint32) {
 	uv := dl.TexUVWhitePixel
 	pointCount := len(points)
 
-	idxCount := (pointCount-2)*3
+	idxCount := (pointCount - 2) * 3
 	vtxCount := pointCount
 	dl.PrimReserve(idxCount, vtxCount)
 
@@ -382,9 +382,9 @@ func (dl *DrawList) AddConvexPolyFilled(points []f32.Vec2, color uint32) {
 		dl.VtxWriter[i] = DrawVert{points[i], uv, color}
 	}
 	for i, ii := 2, 0; i < pointCount; i, ii = i+1, ii+3 {
-		dl.IdxWriter[ii+0] = DrawIdx(dl.vtxIndex+0)
-		dl.IdxWriter[ii+1] = DrawIdx(dl.vtxIndex+i-1)
-		dl.IdxWriter[ii+2] = DrawIdx(dl.vtxIndex+i)
+		dl.IdxWriter[ii+0] = DrawIdx(dl.vtxIndex + 0)
+		dl.IdxWriter[ii+1] = DrawIdx(dl.vtxIndex + i - 1)
+		dl.IdxWriter[ii+2] = DrawIdx(dl.vtxIndex + i)
 	}
 
 	dl.vtxIndex += vtxCount
@@ -400,28 +400,30 @@ func (dl *DrawList) AddConvexPolyFilled(points []f32.Vec2, color uint32) {
 // 以上, 可以提前算好 sin/cos 加速整个过程
 func (dl *DrawList) PathArcToFast(centre f32.Vec2, radius float32, min12, max12 int) {
 	if radius == 0 || min12 > max12 {
-		dl.path[dl.pathUsed] = centre; dl.pathUsed ++
+		dl.path[dl.pathUsed] = centre
+		dl.pathUsed++
 		return
 	}
 	for a := min12; a <= max12; a++ {
-		x := centre[0] + dl.CircleVtx12[a%12][0] * radius
-		y := centre[1] + dl.CircleVtx12[a%12][1] * radius
+		x := centre[0] + dl.CircleVtx12[a%12][0]*radius
+		y := centre[1] + dl.CircleVtx12[a%12][1]*radius
 		dl.path[dl.pathUsed] = f32.Vec2{x, y}
-		dl.pathUsed ++
+		dl.pathUsed++
 	}
 }
 
 func (dl *DrawList) PathArcTo(centre f32.Vec2, radius float32, min, max float32, segments int) {
 	if radius == 0 {
-		dl.path[dl.pathUsed] = centre; dl.pathUsed++
+		dl.path[dl.pathUsed] = centre
+		dl.pathUsed++
 		return
 	}
 	for i := 0; i <= segments; i++ {
-		a := min + (float32(i)/float32(segments)) * (max-min)
-		x := centre[0] + math.Cos(a) * radius
-		y := centre[1] + math.Sin(a) * radius
+		a := min + (float32(i)/float32(segments))*(max-min)
+		x := centre[0] + math.Cos(a)*radius
+		y := centre[1] + math.Sin(a)*radius
 		dl.path[dl.pathUsed] = f32.Vec2{x, y}
-		dl.pathUsed ++
+		dl.pathUsed++
 	}
 
 }
@@ -450,10 +452,10 @@ func (dl *DrawList) PathRect(a, b f32.Vec2, rounding float32, corners FlagCorner
 		if (corners & FlagCornerTopLeft) != 0 {
 			tl = rounding
 		}
-		dl.PathArcToFast(f32.Vec2{a[0]+bl, a[1]+bl}, bl, 6, 9) // bottom-left
-		dl.PathArcToFast(f32.Vec2{b[0]-br, a[1]+br}, br, 9, 12)// bottom-right
-		dl.PathArcToFast(f32.Vec2{b[0]-tr, b[1]-tr}, tr, 0, 3) // top-right
-		dl.PathArcToFast(f32.Vec2{a[0]+tl, b[1]-tl}, tl, 3, 6) // top-left
+		dl.PathArcToFast(f32.Vec2{a[0] + bl, a[1] + bl}, bl, 6, 9)  // bottom-left
+		dl.PathArcToFast(f32.Vec2{b[0] - br, a[1] + br}, br, 9, 12) // bottom-right
+		dl.PathArcToFast(f32.Vec2{b[0] - tr, b[1] - tr}, tr, 0, 3)  // top-right
+		dl.PathArcToFast(f32.Vec2{a[0] + tl, b[1] - tl}, tl, 3, 6)  // top-left
 	}
 }
 
@@ -517,14 +519,14 @@ func (dl *DrawList) AddTriangleFilled(a, b, c f32.Vec2, color uint32) {
 }
 
 func (dl *DrawList) AddCircle(centre f32.Vec2, radius float32, color uint32, segments int, thickness float32) {
-	max := math.Pi * 2 * float32(segments-1)/float32(segments)
+	max := math.Pi * 2 * float32(segments-1) / float32(segments)
 	dl.PathArcTo(centre, radius, 0.0, max, segments)
 	dl.PathStroke(color, thickness, true)
 }
 
 func (dl *DrawList) AddCircleFilled(centre f32.Vec2, radius float32, color uint32, segments int) {
-	max := math.Pi * 2 * float32(segments-1)/float32(segments)
-	dl.PathArcTo(centre, radius,0.0, max, segments)
+	max := math.Pi * 2 * float32(segments-1) / float32(segments)
+	dl.PathArcTo(centre, radius, 0.0, max, segments)
 	dl.PathFillConvex(color)
 }
 
@@ -536,7 +538,7 @@ func (dl *DrawList) AddBezierCurve(pos0 f32.Vec2, cp0, cp1 f32.Vec2, pos1 f32.Ve
 }
 
 func (dl *DrawList) AddImage(texId uint16, a, b f32.Vec2, uva, uvb f32.Vec2, color uint32) {
-	if n := len(dl.TextureIdStack); n == 0 || texId != dl.TextureIdStack[n-1]  {
+	if n := len(dl.TextureIdStack); n == 0 || texId != dl.TextureIdStack[n-1] {
 		dl.PushTextureId(texId)
 		defer dl.PopTextureId()
 	}
@@ -557,7 +559,7 @@ func (dl *DrawList) AddImageQuad(texId uint16, a, b, c, d f32.Vec2, uva, uvb, uv
 }
 
 func (dl *DrawList) AddImageRound(texId uint16, a, b f32.Vec2, uva, uvb f32.Vec2, color uint32, rounding float32, corners FlagCorner) {
-	if rounding <= 0 || (corners & FlagCornerAll) == 0 {
+	if rounding <= 0 || (corners&FlagCornerAll) == 0 {
 		dl.AddImage(texId, a, b, uva, uvb, color)
 		return
 	}
@@ -573,18 +575,18 @@ func (dl *DrawList) AddImageRound(texId uint16, a, b f32.Vec2, uva, uvb f32.Vec2
 	xySize, uvSize := b.Sub(a), uvb.Sub(uva)
 	var scale f32.Vec2
 	if xySize[0] != 0 {
-		scale[0] = uvSize[0]/xySize[0]
+		scale[0] = uvSize[0] / xySize[0]
 	}
 	if xySize[1] != 0 {
-		scale[1] = uvSize[1]/xySize[1]
+		scale[1] = uvSize[1] / xySize[1]
 	}
 
 	// clamp??
-	for i  := range dl.VtxWriter {
+	for i := range dl.VtxWriter {
 		vertex := &dl.VtxWriter[i]
 		dx := (vertex.xy[0] - a[0]) * scale[0]
 		dy := (vertex.xy[1] - a[1]) * scale[1]
-		vertex.uv = f32.Vec2{uva[0]+dx, uva[1]+dy}
+		vertex.uv = f32.Vec2{uva[0] + dx, uva[1] + dy}
 	}
 }
 
@@ -605,7 +607,7 @@ func (dl *DrawList) AddImageRound(texId uint16, a, b f32.Vec2, uva, uvb f32.Vec2
 //  0    1    2    3
 //patch = {x1, x2, y1, y2} % TextureSize
 func (dl *DrawList) AddImageNinePatch(texId uint16, min, max f32.Vec2, uva, uvb f32.Vec2, patch f32.Vec4, color uint32) {
-	if n := len(dl.TextureIdStack); n == 0 || texId != dl.TextureIdStack[n-1]  {
+	if n := len(dl.TextureIdStack); n == 0 || texId != dl.TextureIdStack[n-1] {
 		dl.PushTextureId(texId)
 		defer dl.PopTextureId()
 	}
@@ -613,7 +615,7 @@ func (dl *DrawList) AddImageNinePatch(texId uint16, min, max f32.Vec2, uva, uvb 
 	_, tex := bk.R.Texture(texId)
 	texSize := f32.Vec2{tex.Width, tex.Height}
 
-	idxCount, vtxCount := 9 * 6, 16
+	idxCount, vtxCount := 9*6, 16
 	dl.PrimReserve(idxCount, vtxCount)
 
 	x1, x2, y1, y2 := min[0]+patch[0]*texSize[0], max[0]-patch[1]*texSize[0], min[1]+patch[2]*texSize[1], max[1]-patch[3]*texSize[1]
@@ -621,10 +623,12 @@ func (dl *DrawList) AddImageNinePatch(texId uint16, min, max f32.Vec2, uva, uvb 
 	u1, u2, v1, v2 := uva[0]+patch[0]*uvw, uvb[0]-patch[1]*uvw, uva[1]+patch[2]*uvh, uvb[1]-patch[3]*uvh
 
 	if x2 < x1 {
-		x1 = (min[0] + max[0])/2; x2 = x1
+		x1 = (min[0] + max[0]) / 2
+		x2 = x1
 	}
 	if y2 < y1 {
-		y1 = (min[1] + max[1])/2; y2 = y1
+		y1 = (min[1] + max[1]) / 2
+		y2 = y1
 	}
 
 	vtxWriter := dl.VtxWriter
@@ -654,7 +658,7 @@ func (dl *DrawList) AddImageNinePatch(texId uint16, min, max f32.Vec2, uva, uvb 
 	// fill index
 	ii := uint16(dl.vtxIndex)
 	for i, v := range ninePatchIndex {
-		idxWriter[i] = DrawIdx(ii+v)
+		idxWriter[i] = DrawIdx(ii + v)
 	}
 	dl.idxIndex += idxCount
 	dl.vtxIndex += vtxCount
@@ -662,13 +666,13 @@ func (dl *DrawList) AddImageNinePatch(texId uint16, min, max f32.Vec2, uva, uvb 
 	dl.AddCommand(idxCount)
 }
 
-var ninePatchIndex = [54]uint16 {
-	0, 1, 5,  0, 5,  4,   1, 2,  6,  1, 6,  5,   2,  3, 7,  2,  7,  6,
-	4, 5, 9,  4, 9,  8,   5, 6,  10, 5, 10, 9,   6,  7, 11, 6,  11, 10,
-	8, 9, 13, 8, 13, 12,  9, 10, 14, 9, 14, 13,  10, 11,15, 10, 15, 14,
+var ninePatchIndex = [54]uint16{
+	0, 1, 5, 0, 5, 4, 1, 2, 6, 1, 6, 5, 2, 3, 7, 2, 7, 6,
+	4, 5, 9, 4, 9, 8, 5, 6, 10, 5, 10, 9, 6, 7, 11, 6, 11, 10,
+	8, 9, 13, 8, 13, 12, 9, 10, 14, 9, 14, 13, 10, 11, 15, 10, 15, 14,
 }
 
-func (dl *DrawList) AddText(pos f32.Vec2, text string, font font.Font, fontSize float32, color uint32, wrapWidth float32) (size f32.Vec2){
+func (dl *DrawList) AddText(pos f32.Vec2, text string, font font.Font, fontSize float32, color uint32, wrapWidth float32) (size f32.Vec2) {
 	if text == "" {
 		return
 	}
@@ -680,10 +684,10 @@ func (dl *DrawList) AddText(pos f32.Vec2, text string, font font.Font, fontSize 
 	}
 
 	fr := &FontRender{
-		DrawList:dl,
-		fontSize:fontSize,
-		font:font,
-		color:color,
+		DrawList: dl,
+		fontSize: fontSize,
+		font:     font,
+		color:    color,
 	}
 
 	if wrapWidth > 0 {
@@ -703,11 +707,11 @@ func (dl *DrawList) AddCommand(elemCount int) {
 		order = dl.ZOrder
 		index = dl.cmdIndex
 	)
-	if prev := &dl.CmdBuffer[index-1]; prev.ClipRect == clip && prev.TextureId == tex && prev.zOrder == order{
+	if prev := &dl.CmdBuffer[index-1]; prev.ClipRect == clip && prev.TextureId == tex && prev.zOrder == order {
 		prev.ElemCount += uint16(elemCount)
 	} else {
-		fi := prev.FirstIndex+prev.ElemCount
-		dl.CmdBuffer[index] = DrawCmd{fi,uint16(elemCount),clip,tex, order}
+		fi := prev.FirstIndex + prev.ElemCount
+		dl.CmdBuffer[index] = DrawCmd{fi, uint16(elemCount), clip, tex, order}
 		dl.cmdIndex += 1
 	}
 }
@@ -715,6 +719,3 @@ func (dl *DrawList) AddCommand(elemCount int) {
 func (dl *DrawList) Commands() []DrawCmd {
 	return dl.CmdBuffer[1:dl.cmdIndex]
 }
-
-
-

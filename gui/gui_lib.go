@@ -1,16 +1,16 @@
 package gui
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/gfx"
-	"korok.io/korok/hid/input"
-	"korok.io/korok/gfx/font"
+	"sckorok/gfx"
+	"sckorok/gfx/font"
+	"sckorok/hid/input"
+	"sckorok/math/f32"
 )
 
 type EventType uint8
 
 const (
-	EventWentDown  EventType = 1 << iota
+	EventWentDown EventType = 1 << iota
 	EventWentUp
 	EventDown
 	EventStartDrag
@@ -50,19 +50,19 @@ type Rect struct {
 	W, H float32
 }
 
-func (r *Rect) Offset(dx, dy float32) *Rect{
+func (r *Rect) Offset(dx, dy float32) *Rect {
 	r.X, r.Y = r.X+dx, r.Y+dy
 	return r
 }
 
-func (r *Rect) Scale(skx, sky float32) *Rect{
+func (r *Rect) Scale(skx, sky float32) *Rect {
 	r.X, r.Y = r.X*skx, r.Y*sky
 	r.W, r.H = r.W*skx, r.H*sky
 	return r
 }
 
-func (r *Rect) InRange(p f32.Vec2) bool{
-	if r.X < p[0] && p[0] < (r.X + r.W) && r.Y < p[1] && p[1] < (r.Y + r.H) {
+func (r *Rect) InRange(p f32.Vec2) bool {
+	if r.X < p[0] && p[0] < (r.X+r.W) && r.Y < p[1] && p[1] < (r.Y+r.H) {
 		return true
 	}
 	return false
@@ -84,16 +84,16 @@ type Context struct {
 	Cursor
 
 	// ui global state
-	state struct{
-		hot, active ID
+	state struct {
+		hot, active               ID
 		mouseX, mouseY, mouseDown int
 
 		// drag state
 		draggingPointer ID
-		draggingStart f32.Vec2
+		draggingStart   f32.Vec2
 
 		isLastEventPointerType bool
-		pointerCapture ID
+		pointerCapture         ID
 	}
 
 	// sqNum should be same for  layout and drawing
@@ -140,9 +140,9 @@ func (ctx *Context) Image(id ID, bb *Rect, tex gfx.Tex2D, style *ImageStyle) {
 // Widget: Button
 func (ctx *Context) Button(id ID, bb *Rect, text string, style *ButtonStyle) (event EventType) {
 	var (
-		round = ctx.Theme.Button.Rounding
+		round  = ctx.Theme.Button.Rounding
 		offset f32.Vec2
-		font font.Font
+		font   font.Font
 	)
 	if style == nil {
 		style = &ctx.Theme.Button
@@ -155,8 +155,8 @@ func (ctx *Context) Button(id ID, bb *Rect, text string, style *ButtonStyle) (ev
 
 	if bb.W == 0 {
 		textSize := ctx.CalcTextSize(text, 0, font, style.Size)
-		extW := style.Padding.Left+style.Padding.Right
-		extH := style.Padding.Top+style.Padding.Bottom
+		extW := style.Padding.Left + style.Padding.Right
+		extH := style.Padding.Top + style.Padding.Bottom
 		bb.W = textSize[0] + extW
 		bb.H = textSize[1] + extH
 	} else {
@@ -167,8 +167,8 @@ func (ctx *Context) Button(id ID, bb *Rect, text string, style *ButtonStyle) (ev
 		}
 		textSize := ctx.CalcTextSize(text, 0, font, style.Size)
 		g := style.Gravity
-		offset[0] = (bb.W-textSize[0]-style.Padding.Left-style.Padding.Right) * g[0]
-		offset[1] = (bb.H-textSize[1]-style.Padding.Top-style.Padding.Bottom) * g[1]
+		offset[0] = (bb.W - textSize[0] - style.Padding.Left - style.Padding.Right) * g[0]
+		offset[1] = (bb.H - textSize[1] - style.Padding.Top - style.Padding.Bottom) * g[1]
 	}
 
 	// Check Event
@@ -182,8 +182,8 @@ func (ctx *Context) Button(id ID, bb *Rect, text string, style *ButtonStyle) (ev
 	}
 
 	// Render Text
-	bb.X +=  offset[0] + style.Padding.Left
-	bb.Y +=  offset[1] + style.Padding.Top
+	bb.X += offset[0] + style.Padding.Left
+	bb.Y += offset[1] + style.Padding.Top
 
 	ctx.DrawText(bb, text, &style.TextStyle)
 	return
@@ -193,13 +193,13 @@ func (ctx *Context) ImageBackground(eventType EventType) {
 
 }
 
-func (ctx *Context) ImageButton(id ID, normal, pressed gfx.Tex2D, bb *Rect, style *ImageButtonStyle) ( event EventType) {
+func (ctx *Context) ImageButton(id ID, normal, pressed gfx.Tex2D, bb *Rect, style *ImageButtonStyle) (event EventType) {
 	if style == nil {
 		style = &ctx.Theme.ImageButton
 	}
 	event = ctx.ClickEvent(id, bb)
 	var tex gfx.Tex2D
-	if event & EventDown != 0 {
+	if event&EventDown != 0 {
 		tex = pressed
 	} else {
 		tex = normal
@@ -208,12 +208,12 @@ func (ctx *Context) ImageButton(id ID, normal, pressed gfx.Tex2D, bb *Rect, styl
 	return
 }
 
-func (ctx *Context) Slider(id ID, bb *Rect, value *float32, style *SliderStyle) (e EventType){
+func (ctx *Context) Slider(id ID, bb *Rect, value *float32, style *SliderStyle) (e EventType) {
 	if style == nil {
 		style = &ctx.Theme.Slider
 	}
 	// 说明滑动了，那么应该使用最新的值，而不是传入的值
-	if v, event := ctx.CheckSlider(id, bb); event & EventDragging != 0 {
+	if v, event := ctx.CheckSlider(id, bb); event&EventDragging != 0 {
 		*value = v
 		e = event
 	}
@@ -242,12 +242,16 @@ func (ctx *Context) CheckSlider(id ID, bound *Rect) (v float32, e EventType) {
 		ctx.state.pointerCapture = -1
 	}
 	// Update the knob position & default = Horizontal
-	if (event & (EventDragging|EventWentDown)) != 0{
-		p1 := (input.PointerPosition(0).MousePos[0])/screen.scaleX
+	if (event & (EventDragging | EventWentDown)) != 0 {
+		p1 := (input.PointerPosition(0).MousePos[0]) / screen.scaleX
 		p0 := bound.X + ctx.Cursor.X
-		v = (p1 - p0)/bound.W
-		if v > 1 { v = 1 }
-		if v < 0 { v = 0 }
+		v = (p1 - p0) / bound.W
+		if v > 1 {
+			v = 1
+		}
+		if v < 0 {
+			v = 0
+		}
 	}
 	e = event
 	return
@@ -256,10 +260,10 @@ func (ctx *Context) CheckSlider(id ID, bound *Rect) (v float32, e EventType) {
 func (ctx *Context) ClickEvent(id ID, rect *Rect) EventType {
 	var (
 		event = EventNone
-		c = ctx.Cursor
+		c     = ctx.Cursor
 	)
-	bb := Rect{(c.X+rect.X)*screen.scaleX, (c.Y+rect.Y)*screen.scaleY, rect.W*screen.scaleX,rect.H*screen.scaleY}
-	if p  := input.PointerPosition(0); bb.InRange(p.MousePos) {
+	bb := Rect{(c.X + rect.X) * screen.scaleX, (c.Y + rect.Y) * screen.scaleY, rect.W * screen.scaleX, rect.H * screen.scaleY}
+	if p := input.PointerPosition(0); bb.InRange(p.MousePos) {
 		btn := input.PointerButton(0)
 		if btn.JustPressed() {
 			ctx.state.active = id
@@ -278,11 +282,11 @@ func (ctx *Context) ClickEvent(id ID, rect *Rect) EventType {
 func (ctx *Context) DraggingEvent(id ID, bound *Rect) EventType {
 	var (
 		event = EventNone
-		c = ctx.Cursor
+		c     = ctx.Cursor
 	)
 
-	bb := Rect{(c.X+bound.X)*screen.scaleX, (c.Y+bound.Y)*screen.scaleY, bound.W*screen.scaleX, bound.H*screen.scaleY}
-	p  := input.PointerPosition(0)
+	bb := Rect{(c.X + bound.X) * screen.scaleX, (c.Y + bound.Y) * screen.scaleY, bound.W * screen.scaleX, bound.H * screen.scaleY}
+	p := input.PointerPosition(0)
 
 	if bb.InRange(p.MousePos) || ctx.state.pointerCapture == id {
 		// in-dragging, The pointer is in drag operation
@@ -309,8 +313,8 @@ func (ctx *Context) DraggingEvent(id ID, bound *Rect) EventType {
 					dragThreshHold = float32(8)
 				)
 
-				bb := Rect{startPosition[0]-dragThreshHold,
-					startPosition[1]-dragThreshHold,
+				bb := Rect{startPosition[0] - dragThreshHold,
+					startPosition[1] - dragThreshHold,
 					dragThreshHold,
 					dragThreshHold}
 
@@ -339,13 +343,13 @@ func (ctx *Context) DrawQuad(vertex [4]f32.Vec2, fill gfx.Color) {
 
 func (ctx *Context) DrawGradient(bb Rect, c0, c1 gfx.Color, vertical bool) {
 	var (
-		x = bb.X+ctx.Cursor.X
-		y = bb.Y+ctx.Cursor.Y
+		x = bb.X + ctx.Cursor.X
+		y = bb.Y + ctx.Cursor.Y
 	)
 	x, y = Gui2Game(x, y)
 
-	min := f32.Vec2{x * screen.scaleX, (y-bb.H) * screen.scaleY}
-	max := f32.Vec2{(x+bb.W) * screen.scaleX, y * screen.scaleY}
+	min := f32.Vec2{x * screen.scaleX, (y - bb.H) * screen.scaleY}
+	max := f32.Vec2{(x + bb.W) * screen.scaleX, y * screen.scaleY}
 
 	dl := &ctx.DrawList
 	dl.PrimReserve(6, 4)
@@ -365,13 +369,13 @@ func (ctx *Context) DrawGradient(bb Rect, c0, c1 gfx.Color, vertical bool) {
 		dl.VtxWriter[3] = DrawVert{d, uv, left}
 	}
 
-	dl.IdxWriter[0] = DrawIdx(dl.vtxIndex+0)
-	dl.IdxWriter[1] = DrawIdx(dl.vtxIndex+1)
-	dl.IdxWriter[2] = DrawIdx(dl.vtxIndex+2)
+	dl.IdxWriter[0] = DrawIdx(dl.vtxIndex + 0)
+	dl.IdxWriter[1] = DrawIdx(dl.vtxIndex + 1)
+	dl.IdxWriter[2] = DrawIdx(dl.vtxIndex + 2)
 
-	dl.IdxWriter[3] = DrawIdx(dl.vtxIndex+0)
-	dl.IdxWriter[4] = DrawIdx(dl.vtxIndex+2)
-	dl.IdxWriter[5] = DrawIdx(dl.vtxIndex+3)
+	dl.IdxWriter[3] = DrawIdx(dl.vtxIndex + 0)
+	dl.IdxWriter[4] = DrawIdx(dl.vtxIndex + 2)
+	dl.IdxWriter[5] = DrawIdx(dl.vtxIndex + 3)
 
 	dl.vtxIndex += 4
 	dl.idxIndex += 6
@@ -380,30 +384,30 @@ func (ctx *Context) DrawGradient(bb Rect, c0, c1 gfx.Color, vertical bool) {
 
 func (ctx *Context) DrawRect(bb *Rect, fill gfx.Color, round float32) {
 	var (
-		x = bb.X+ctx.Cursor.X
-		y = bb.Y+ctx.Cursor.Y
+		x = bb.X + ctx.Cursor.X
+		y = bb.Y + ctx.Cursor.Y
 	)
 	x, y = Gui2Game(x, y)
-	min := f32.Vec2{x * screen.scaleX, (y-bb.H) * screen.scaleY}
-	max := f32.Vec2{(x+bb.W) * screen.scaleX, y * screen.scaleY}
-	ctx.DrawList.AddRectFilled(min, max, fill.U32(), round * screen.scaleX, FlagCornerAll)
+	min := f32.Vec2{x * screen.scaleX, (y - bb.H) * screen.scaleY}
+	max := f32.Vec2{(x + bb.W) * screen.scaleX, y * screen.scaleY}
+	ctx.DrawList.AddRectFilled(min, max, fill.U32(), round*screen.scaleX, FlagCornerAll)
 }
 
 func (ctx *Context) DrawBorder(bb *Rect, color uint32, round, thick float32) {
 	var (
-		x = bb.X+ctx.Cursor.X
-		y = bb.Y+ctx.Cursor.Y
+		x = bb.X + ctx.Cursor.X
+		y = bb.Y + ctx.Cursor.Y
 	)
 	x, y = Gui2Game(x, y)
-	min := f32.Vec2{x * screen.scaleX, (y-bb.H) * screen.scaleY}
-	max := f32.Vec2{(x+bb.W) * screen.scaleX, y * screen.scaleY}
-	ctx.DrawList.AddRect(min, max, color, round * screen.scaleX, FlagCornerAll, thick)
+	min := f32.Vec2{x * screen.scaleX, (y - bb.H) * screen.scaleY}
+	max := f32.Vec2{(x + bb.W) * screen.scaleX, y * screen.scaleY}
+	ctx.DrawList.AddRect(min, max, color, round*screen.scaleX, FlagCornerAll, thick)
 }
 
 func (ctx *Context) DrawDebugBorder(x, y, w, h float32, color uint32) {
-	x, y = Gui2Game(x + ctx.Cursor.X, y + ctx.Cursor.Y)
-	min := f32.Vec2{x * screen.scaleX, (y-h) * screen.scaleY}
-	max := f32.Vec2{(x+w) * screen.scaleX, y * screen.scaleY}
+	x, y = Gui2Game(x+ctx.Cursor.X, y+ctx.Cursor.Y)
+	min := f32.Vec2{x * screen.scaleX, (y - h) * screen.scaleY}
+	max := f32.Vec2{(x + w) * screen.scaleX, y * screen.scaleY}
 	ctx.DrawList.AddRect(min, max, color, 0, FlagCornerNone, 1)
 }
 
@@ -412,7 +416,7 @@ func (ctx *Context) DrawCircle(x, y, radius float32, fill gfx.Color) {
 	x, y = Gui2Game(x+ctx.Cursor.X, y+ctx.Cursor.Y)
 	x = x * screen.scaleX
 	y = y * screen.scaleY
-	ctx.DrawList.AddCircleFilled(f32.Vec2{x, y}, radius * screen.scaleX, fill.U32(), 12)
+	ctx.DrawList.AddCircleFilled(f32.Vec2{x, y}, radius*screen.scaleX, fill.U32(), 12)
 }
 
 // segment default=12
@@ -420,11 +424,11 @@ func (ctx *Context) DrawCircleNoneFill(x, y, radius float32, strokeColor gfx.Col
 	x, y = Gui2Game(x+ctx.Cursor.X, y+ctx.Cursor.Y)
 	x = x * screen.scaleX
 	y = y * screen.scaleY
-	ctx.DrawList.AddCircle(f32.Vec2{x, y}, radius * screen.scaleX, strokeColor.U32(), segment, thickness)
+	ctx.DrawList.AddCircle(f32.Vec2{x, y}, radius*screen.scaleX, strokeColor.U32(), segment, thickness)
 }
 
 func (ctx *Context) DrawImage(bound *Rect, tex gfx.Tex2D, style *ImageStyle) {
-	min := f32.Vec2{bound.X+ctx.Cursor.X, bound.Y+ctx.Cursor.Y}
+	min := f32.Vec2{bound.X + ctx.Cursor.X, bound.Y + ctx.Cursor.Y}
 	if bound.W == 0 {
 		sz := tex.Size()
 		bound.W = sz.Width
@@ -441,14 +445,14 @@ func (ctx *Context) DrawImage(bound *Rect, tex gfx.Tex2D, style *ImageStyle) {
 	max[0], max[1] = Gui2Game(max[0], max[1])
 
 	// scale
-	min[0], min[1] = min[0] * screen.scaleX, min[1] * screen.scaleY
-	max[0], max[1] = max[0] * screen.scaleX, max[1] * screen.scaleY
+	min[0], min[1] = min[0]*screen.scaleX, min[1]*screen.scaleY
+	max[0], max[1] = max[0]*screen.scaleX, max[1]*screen.scaleY
 
 	rg := tex.Region()
 	if rg.Rotated {
 		ctx.DrawList.AddImageQuad(tex.Tex(),
-			min, f32.Vec2{max[0], min[1]},  max, f32.Vec2{min[0], max[1]}, // xy
-			f32.Vec2{rg.X2, rg.Y1}, f32.Vec2{rg.X2, rg.Y2}, f32.Vec2{rg.X1, rg.Y2}, f32.Vec2{rg.X1, rg.Y1},// uv
+			min, f32.Vec2{max[0], min[1]}, max, f32.Vec2{min[0], max[1]}, // xy
+			f32.Vec2{rg.X2, rg.Y1}, f32.Vec2{rg.X2, rg.Y2}, f32.Vec2{rg.X1, rg.Y2}, f32.Vec2{rg.X1, rg.Y1}, // uv
 			color)
 	} else {
 		ctx.DrawList.AddImage(tex.Tex(), min, max, f32.Vec2{rg.X1, rg.Y1}, f32.Vec2{rg.X2, rg.Y2}, color)
@@ -459,11 +463,11 @@ func (ctx *Context) DrawImage(bound *Rect, tex gfx.Tex2D, style *ImageStyle) {
 func (ctx *Context) DrawText(bb *Rect, text string, style *TextStyle) (size f32.Vec2) {
 	x, y := Gui2Game(bb.X+ctx.Cursor.X, bb.Y+ctx.Cursor.Y)
 	var (
-		font = style.Font
-		fontSize = style.Size * screen.scaleX // TODO 字体缩放不能这么简单的考虑
-		color = style.Color.U32()
+		font      = style.Font
+		fontSize  = style.Size * screen.scaleX // TODO 字体缩放不能这么简单的考虑
+		color     = style.Color.U32()
 		wrapWidth = (bb.W + 10) * screen.scaleX
-		pos = f32.Vec2{x * screen.scaleX, y * screen.scaleY}
+		pos       = f32.Vec2{x * screen.scaleX, y * screen.scaleY}
 	)
 	if font == nil {
 		font = ctx.Theme.Font
@@ -506,7 +510,7 @@ func Game2Gui(x, y float32) (x1, y1 float32) {
 	return x, screen.hintY - y
 }
 
-type screenSize struct{
+type screenSize struct {
 	rlWidth, rlHeight float32
 	vtWidth, vtHeight float32
 	// hint
@@ -537,20 +541,20 @@ func (sc *screenSize) updateHint() {
 		screen.scaleX = 1
 		screen.scaleY = 1
 	} else if w == 0 {
-		f := screen.rlHeight/h
+		f := screen.rlHeight / h
 		screen.scaleY = f
 		screen.scaleX = f
 		screen.hintY = h
-		screen.hintX = screen.rlWidth/f
+		screen.hintX = screen.rlWidth / f
 	} else if h == 0 {
-		f := screen.rlWidth/w
+		f := screen.rlWidth / w
 		screen.scaleY = f
 		screen.scaleX = f
 		screen.hintX = w
-		screen.hintY = screen.rlHeight/f
+		screen.hintY = screen.rlHeight / f
 	} else {
-		screen.scaleX = screen.rlWidth/w
-		screen.scaleY = screen.rlHeight/h
+		screen.scaleX = screen.rlWidth / w
+		screen.scaleY = screen.rlHeight / h
 		screen.hintX = w
 		screen.hintY = h
 	}

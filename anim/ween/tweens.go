@@ -1,19 +1,19 @@
 package ween
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/gfx"
 	"log"
+	"sckorok/gfx"
+	"sckorok/math/f32"
 )
 
 func U8Lerp(from, to uint8, f float32) uint8 {
 	v1, v2 := float32(from), float32(to)
-	return uint8(v1+(v2-v1)*f)
+	return uint8(v1 + (v2-v1)*f)
 }
 
 func U16Lerp(from, to uint16, f float32) uint16 {
 	v1, v2 := float32(from), float32(to)
-	return uint16(v1+(v2-v1)*f)
+	return uint16(v1 + (v2-v1)*f)
 }
 
 func IntLerp(from, to int, f float32) int {
@@ -45,7 +45,7 @@ func ColorLerp(from, to gfx.Color, f float32) gfx.Color {
 // A float32 linear interpolation between a beginning and ending value.
 // It use the Animator as the input.
 type F32Tween struct {
-	am Animator
+	am       Animator
 	from, to float32
 }
 
@@ -78,7 +78,7 @@ func (t *F32Tween) Value() float32 {
 // A f32.Vec2 linear interpolation between a beginning and ending value.
 // It use the Animator as the input.
 type Vec2Tween struct {
-	am Animator
+	am       Animator
 	from, to f32.Vec2
 }
 
@@ -107,7 +107,7 @@ func (t *Vec2Tween) Value() f32.Vec2 {
 // A gfx.Color linear interpolation between a beginning and ending value.
 // It use the Animator as the input.
 type ColorTween struct {
-	am Animator
+	am       Animator
 	from, to gfx.Color
 }
 
@@ -132,5 +132,3 @@ func (t *ColorTween) Animator() Animator {
 func (t *ColorTween) Value() gfx.Color {
 	return ColorLerp(t.from, t.to, t.am.Value())
 }
-
-

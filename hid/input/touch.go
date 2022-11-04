@@ -1,6 +1,6 @@
 package input
 
-import "korok.io/korok/math/f32"
+import "sckorok/math/f32"
 
 type FingerId int
 
@@ -14,5 +14,3 @@ type PointerInput struct {
 
 	used bool
 }
-
-

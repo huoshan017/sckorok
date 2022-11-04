@@ -1,3 +1,4 @@
+//go:build js
 // +build js
 
 package hid
@@ -9,8 +10,8 @@ import (
 	"runtime/pprof"
 	"syscall/js"
 
-	"korok.io/korok/asset/res"
-	"korok.io/korok/hid/gl"
+	"sckorok/asset/res"
+	"sckorok/hid/gl"
 
 	"strconv"
 	"time"

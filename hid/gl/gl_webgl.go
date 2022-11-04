@@ -1,3 +1,4 @@
+//go:build js
 // +build js
 
 package gl
@@ -7,7 +8,7 @@ import (
 
 	"syscall/js"
 
-	"korok.io/korok/webav"
+	"sckorok/webav"
 )
 
 var (

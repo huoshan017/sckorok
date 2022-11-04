@@ -5,7 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 
-	"korok.io/korok/asset/res"
+	"sckorok/asset/res"
 )
 
 const (

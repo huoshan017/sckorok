@@ -1,9 +1,9 @@
 package anim
 
 import (
-	"korok.io/korok/anim/frame"
-	"korok.io/korok/anim/ween"
-	"korok.io/korok/gfx"
+	"sckorok/anim/frame"
+	"sckorok/anim/ween"
+	"sckorok/gfx"
 )
 
 type AnimationSystem struct {
@@ -18,7 +18,7 @@ type AnimationSystem struct {
 func NewAnimationSystem() *AnimationSystem {
 	return &AnimationSystem{
 		SpriteEngine: frame.NewEngine(),
-		TweenEngine: ween.NewEngine(),
+		TweenEngine:  ween.NewEngine(),
 	}
 }
 

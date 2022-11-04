@@ -1,10 +1,10 @@
 package game
 
-import "korok.io/korok/engi"
+import "sckorok/engi"
 
 /**
-	游戏对象绑定脚本/行为
- */
+游戏对象绑定脚本/行为
+*/
 
 type Script interface {
 	Init()
@@ -24,8 +24,8 @@ func (sc *ScriptComp) SetScript(script Script) {
 }
 
 type ScriptTable struct {
-	comps []ScriptComp
-	_map   map[uint32]int
+	comps      []ScriptComp
+	_map       map[uint32]int
 	index, cap int
 }
 
@@ -35,7 +35,7 @@ func NewScriptTable(cap int) *ScriptTable {
 
 func (st *ScriptTable) NewComp(entity engi.Entity, script Script) (sc *ScriptComp) {
 	if size := len(st.comps); st.index >= size {
-		st.comps = scriptResize(st.comps, size + 64)
+		st.comps = scriptResize(st.comps, size+64)
 	}
 	ei := entity.Index()
 	if v, ok := st._map[ei]; ok {
@@ -45,7 +45,7 @@ func (st *ScriptTable) NewComp(entity engi.Entity, script Script) (sc *ScriptCom
 	sc.Entity = entity
 	sc.Script = script
 	st._map[ei] = st.index
-	st.index ++
+	st.index++
 	return
 }
 
@@ -66,7 +66,7 @@ func (st *ScriptTable) Comp(entity engi.Entity) (sc *ScriptComp) {
 func (st *ScriptTable) Delete(entity engi.Entity) {
 	ei := entity.Index()
 	if v, ok := st._map[ei]; ok {
-		if tail := st.index -1; v != tail && tail > 0 {
+		if tail := st.index - 1; v != tail && tail > 0 {
 			st.comps[v] = st.comps[tail]
 			// remap index
 			tComp := &st.comps[tail]
@@ -117,6 +117,3 @@ func (ss *ScriptSystem) Update(dt float32) {
 		}
 	}
 }
-
-
-

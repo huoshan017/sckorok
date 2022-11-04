@@ -1,10 +1,10 @@
 package gfx
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/engi"
+	"sckorok/engi"
+	"sckorok/gfx/dbg"
+	"sckorok/math/f32"
 	"sort"
-	"korok.io/korok/gfx/dbg"
 )
 
 type RenderType int32
@@ -23,9 +23,9 @@ type Render interface {
 // Shared properties by most render object.
 type RenderObject struct {
 	engi.Entity
-	Size f32.Vec2
-	Center f32.Vec2
-	ZOrder int16
+	Size    f32.Vec2
+	Center  f32.Vec2
+	ZOrder  int16
 	BatchId uint16
 }
 
@@ -76,12 +76,13 @@ func (th *RenderSystem) RequireTable(tables []interface{}) {
 	th.TableList = tables
 	for _, table := range tables {
 		if t, ok := table.(*TransformTable); ok {
-			th.xfs = t; break
+			th.xfs = t
+			break
 		}
 	}
 }
 
-func (th *RenderSystem) Accept(rf RenderFeature) (index int){
+func (th *RenderSystem) Accept(rf RenderFeature) (index int) {
 	index = len(th.FeatureList)
 	th.FeatureList = append(th.FeatureList, rf)
 	return
@@ -96,9 +97,9 @@ func (th *RenderSystem) Update(dt float32) {
 	// update camera
 	if c := &th.MainCamera; c.follow != engi.Ghost {
 		xf := th.xfs.Comp(c.follow)
-		p  := xf.Position()
-		dx := (p[0]-c.mat.x)*.1
-		dy := (p[1]-c.mat.y)*.1
+		p := xf.Position()
+		dx := (p[0] - c.mat.x) * .1
+		dy := (p[1] - c.mat.y) * .1
 		c.MoveBy(dx, dy)
 	}
 
@@ -129,8 +130,8 @@ func (th *RenderSystem) Update(dt float32) {
 
 	// draw
 	for i, j := 0, 0; i < n; i = j {
-		fi := nodes[i].Value >>16
-		j = i+1
+		fi := nodes[i].Value >> 16
+		j = i + 1
 		for j < n && nodes[j].Value>>16 == fi {
 			j++
 		}
@@ -139,10 +140,9 @@ func (th *RenderSystem) Update(dt float32) {
 	}
 
 	// flush, release any resource
-	for _, f := range  th.FeatureList {
+	for _, f := range th.FeatureList {
 		f.Flush()
 	}
-
 
 	// view reset
 	th.View.RenderNodes = th.View.RenderNodes[:0]
@@ -153,7 +153,7 @@ func (th *RenderSystem) Destroy() {
 }
 
 func NewRenderSystem() (rs *RenderSystem) {
-	rs = &RenderSystem{MainCamera:Camera{follow:engi.Ghost}}
+	rs = &RenderSystem{MainCamera: Camera{follow: engi.Ghost}}
 	rs.View.Camera = &rs.MainCamera
 	rs.View.RenderNodes = make([]SortObject, 0)
 	rs.MainCamera.initialize()

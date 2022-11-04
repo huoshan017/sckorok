@@ -1,8 +1,8 @@
 package effect
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/math"
+	"sckorok/math"
+	"sckorok/math/f32"
 )
 
 // Compute Channel：
@@ -12,6 +12,7 @@ import (
 // Compute channel is an array of values that can be computed in a for-loop.
 // It's data structure is cache-friendly.
 type ChanType uint8
+
 const (
 	ChanF32 ChanType = iota
 	ChanV2
@@ -33,13 +34,13 @@ func (ch Channel_f32) SetRandom(n int32, v Var) {
 }
 
 func (ch Channel_f32) Add(n int32, v float32) {
-	for i := int32(0); i < n; i ++ {
+	for i := int32(0); i < n; i++ {
 		ch[i] += v
 	}
 }
 
 func (ch Channel_f32) Sub(n int32, v float32) {
-	for i := int32(0); i < n; i ++ {
+	for i := int32(0); i < n; i++ {
 		ch[i] -= v
 	}
 }
@@ -118,13 +119,13 @@ func (ch Channel_v2) tangentIntegrate(n int32, xy Channel_v2, m Channel_f32, dt 
 type Channel_v4 []f32.Vec4
 
 func (ch Channel_v4) SetConst(n int32, x, y, z, w float32) {
-	for i := int32(0); i < n; i ++ {
+	for i := int32(0); i < n; i++ {
 		ch[i][0], ch[i][1], ch[i][2], ch[i][3] = x, y, z, w
 	}
 }
 
 func (ch Channel_v4) SetRandom(n int32, x, y, z, v [4]Var) {
-	for i := int32(0); i < n; i ++ {
+	for i := int32(0); i < n; i++ {
 		ch[i][0] = math.Random(v[0].Base, v[0].Base+v[0].Var)
 		ch[i][1] = math.Random(v[1].Base, v[1].Base+v[1].Var)
 		ch[i][2] = math.Random(v[2].Base, v[2].Base+v[2].Var)
@@ -133,7 +134,7 @@ func (ch Channel_v4) SetRandom(n int32, x, y, z, v [4]Var) {
 }
 
 func (ch Channel_v4) Add(n int32, x, y, z, w float32) {
-	for i := int32(0); i < n; i ++ {
+	for i := int32(0); i < n; i++ {
 		ch[i][0] += x
 		ch[i][1] += y
 		ch[i][2] += z
@@ -142,7 +143,7 @@ func (ch Channel_v4) Add(n int32, x, y, z, w float32) {
 }
 
 func (ch Channel_v4) Sub(n int32, x, y, z, w float32) {
-	for i := int32(0); i < n; i ++ {
+	for i := int32(0); i < n; i++ {
 		ch[i][0] -= x
 		ch[i][1] -= y
 		ch[i][2] -= z
@@ -159,8 +160,8 @@ func (ch Channel_v4) Integrate(n int32, d Channel_v4, dt float32) {
 	}
 }
 
-func normalize(x, y float32, n *[2]float32)  {
-	div := math.InvSqrt(x * x + y * y)
+func normalize(x, y float32, n *[2]float32) {
+	div := math.InvSqrt(x*x + y*y)
 	n[0] = x * div
 	n[1] = x * div
 }

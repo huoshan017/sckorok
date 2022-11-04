@@ -1,9 +1,9 @@
 package gfx
 
 import (
-	"korok.io/korok/engi"
-	"korok.io/korok/gfx/font"
-	"korok.io/korok/math/f32"
+	"sckorok/engi"
+	"sckorok/gfx/font"
+	"sckorok/math/f32"
 )
 
 // 文字应该采用 BatchRender 绘制
@@ -27,23 +27,23 @@ type TextComp struct {
 	zOrder
 	batchId
 
-	size float32
+	size  float32
 	color uint32
 
-	width float32
-	height float32
-	gravity struct{
+	width   float32
+	height  float32
+	gravity struct {
 		x, y float32
 	}
 	visible bool
 
 	// TextModel
-	text  string
-	vertex []TextQuad
+	text      string
+	vertex    []TextQuad
 	runeCount int32
 }
 
-func (tc *TextComp)  Color() Color {
+func (tc *TextComp) Color() Color {
 	return U32Color(tc.color)
 }
 
@@ -58,7 +58,7 @@ func (tc *TextComp) Text() string {
 func (tc *TextComp) SetText(text string) {
 	tc.text = text
 	// init ebo, vbo
-	tc.runeCount  = int32(len(text))
+	tc.runeCount = int32(len(text))
 
 	// fill data
 	tc.fillData()
@@ -108,8 +108,8 @@ func (tc *TextComp) fillData() {
 	_, gh := tc.font.Bounds()
 
 	var (
-		size = struct { w, h float32}{}
-		scale = tc.size/gh
+		size    = struct{ w, h float32 }{}
+		scale   = tc.size / gh
 		xOffset float32
 		yOffset float32
 	)
@@ -133,7 +133,7 @@ func (tc *TextComp) fillData() {
 			char := &chars[i]
 
 			char.xOffset = xOffset + ox
-			char.yOffset = yOffset - (oy+vh)
+			char.yOffset = yOffset - (oy + vh)
 			char.w, char.h = vw, vh
 			char.region.X1, char.region.Y1 = u1, v1
 			char.region.X2, char.region.Y2 = u2, v2
@@ -163,19 +163,18 @@ func (tc *TextComp) SetFont(fnt font.Font) {
 
 // TextTable
 type TextTable struct {
-	comps []TextComp
-	_map   map[uint32]int
+	comps      []TextComp
+	_map       map[uint32]int
 	index, cap int
-
 }
 
 func NewTextTable(cap int) *TextTable {
-	return &TextTable{cap: cap,_map: make(map[uint32]int)}
+	return &TextTable{cap: cap, _map: make(map[uint32]int)}
 }
 
 func (tt *TextTable) NewComp(entity engi.Entity) (tc *TextComp) {
 	if size := len(tt.comps); tt.index >= size {
-		tt.comps = textResize(tt.comps, size + STEP)
+		tt.comps = textResize(tt.comps, size+STEP)
 	}
 	ei := entity.Index()
 	if v, ok := tt._map[ei]; ok {
@@ -188,8 +187,8 @@ func (tt *TextTable) NewComp(entity engi.Entity) (tc *TextComp) {
 	tc.gravity.x = .5
 	tc.gravity.y = .5
 	tc.visible = true
-	tt._map[ei] = tt.index;
-	tt.index ++
+	tt._map[ei] = tt.index
+	tt.index++
 	return
 }
 
@@ -210,7 +209,7 @@ func (tt *TextTable) Comp(entity engi.Entity) (tc *TextComp) {
 func (tt *TextTable) Delete(entity engi.Entity) (tc *TextComp) {
 	ei := entity.Index()
 	if v, ok := tt._map[ei]; ok {
-		if tail := tt.index -1; v != tail && tail > 0 {
+		if tail := tt.index - 1; v != tail && tail > 0 {
 			tt.comps[v] = tt.comps[tail]
 			// remap index
 			tComp := tt.comps[tail]
@@ -244,11 +243,10 @@ func textResize(slice []TextComp, size int) []TextComp {
 	return newSlice
 }
 
-
 type TextRenderFeature struct {
 	Stack *StackAllocator
-	R *BatchRender
-	id int
+	R     *BatchRender
+	id    int
 
 	tt *TextTable
 	xt *TransformTable
@@ -260,13 +258,14 @@ func (f *TextRenderFeature) Register(rs *RenderSystem) {
 	for _, r := range rs.RenderList {
 		switch br := r.(type) {
 		case *BatchRender:
-			f.R = br; break
+			f.R = br
+			break
 		}
 	}
 
 	// init table
 	for _, t := range rs.TableList {
-		switch table := t.(type){
+		switch table := t.(type) {
 		case *TextTable:
 			f.tt = table
 		case *TransformTable:
@@ -280,13 +279,13 @@ func (f *TextRenderFeature) Extract(v *View) {
 	var (
 		camera = v.Camera
 		xt     = f.xt
-		fi     = uint32(f.id)<<16
+		fi     = uint32(f.id) << 16
 	)
 
 	for i, spr := range f.tt.comps[:f.tt.index] {
 		xf := xt.Comp(spr.Entity)
 		sz := f32.Vec2{spr.width, spr.height}
-		g  := f32.Vec2{spr.gravity.x, spr.gravity.y}
+		g := f32.Vec2{spr.gravity.x, spr.gravity.y}
 
 		if spr.visible && camera.InView(xf, sz, g) {
 			sid := PackSortId(spr.zOrder.value, spr.batchId.value)
@@ -299,8 +298,8 @@ func (f *TextRenderFeature) Extract(v *View) {
 func (f *TextRenderFeature) Draw(nodes RenderNodes) {
 	var (
 		tt, xt = f.tt, f.xt
-		sortId  = uint32(0xFFFFFFFF)
-		begin = false
+		sortId = uint32(0xFFFFFFFF)
+		begin  = false
 		render = f.R
 	)
 
@@ -348,7 +347,7 @@ type textBatchObject struct {
 // 1 * 1 quad for each char
 // order: 3 0 1 3 1 2
 func (tbo textBatchObject) Fill(buf []PosTexColorVertex) {
-	srt :=  &tbo.Transform.world
+	srt := &tbo.Transform.world
 	p := tbo.Transform.world.Position
 	t := tbo.TextComp
 
@@ -357,8 +356,8 @@ func (tbo textBatchObject) Fill(buf []PosTexColorVertex) {
 	oy := t.height * t.gravity.y
 
 	// Transform matrix
-	m := f32.Mat3{}; m.Initialize(p[0], p[1], srt.Rotation, srt.Scale[0], srt.Scale[1], ox, oy, 0,0)
-
+	m := f32.Mat3{}
+	m.Initialize(p[0], p[1], srt.Rotation, srt.Scale[0], srt.Scale[1], ox, oy, 0, 0)
 
 	for i, char := range tbo.vertex {
 		vi := i * 4
@@ -371,19 +370,19 @@ func (tbo textBatchObject) Fill(buf []PosTexColorVertex) {
 
 		// index (1,0) <x,y,u,v>
 		v = &buf[vi+1]
-		v.X, v.Y = m.Transform(char.xOffset + char.w, char.yOffset)
+		v.X, v.Y = m.Transform(char.xOffset+char.w, char.yOffset)
 		v.U, v.V = char.region.X2, char.region.Y2
 		v.RGBA = t.color
 
 		// index(1,1) <x,y,u,v>
 		v = &buf[vi+2]
-		v.X, v.Y = m.Transform(char.xOffset + char.w, char.yOffset + char.h)
+		v.X, v.Y = m.Transform(char.xOffset+char.w, char.yOffset+char.h)
 		v.U, v.V = char.region.X2, char.region.Y1
 		v.RGBA = t.color
 
 		// index(0, 1) <x,y,u,v>
 		v = &buf[vi+3]
-		v.X, v.Y = m.Transform(char.xOffset, char.yOffset + char.h)
+		v.X, v.Y = m.Transform(char.xOffset, char.yOffset+char.h)
 		v.U, v.V = char.region.X1, char.region.Y1
 		v.RGBA = t.color
 	}
@@ -392,5 +391,3 @@ func (tbo textBatchObject) Fill(buf []PosTexColorVertex) {
 func (tbo textBatchObject) Size() int {
 	return 4 * len(tbo.vertex)
 }
-
-

@@ -1,9 +1,9 @@
 package gui
 
 import (
-	"korok.io/korok/gfx"
-	"korok.io/korok/gfx/font"
-	"korok.io/korok/math/f32"
+	"sckorok/gfx"
+	"sckorok/gfx/font"
+	"sckorok/math/f32"
 )
 
 type Visibility uint8
@@ -97,16 +97,16 @@ type SliderStyle struct {
 //// 这样
 func newLightTheme() *Theme {
 	return &Theme{
-		Text:TextStyle{
-			Color:gfx.Black,
-			Size:12,
-			LineSpace:6,
+		Text: TextStyle{
+			Color:     gfx.Black,
+			Size:      12,
+			LineSpace: 6,
 		},
-		Button:ButtonStyle{
-			TextStyle:TextStyle{Color:gfx.Black, Size:12},
-			Padding:Padding{10, 10, 10, 10},
-			Gravity:f32.Vec2{.5, .5},
-			Rounding:5,
+		Button: ButtonStyle{
+			TextStyle: TextStyle{Color: gfx.Black, Size: 12},
+			Padding:   Padding{10, 10, 10, 10},
+			Gravity:   f32.Vec2{.5, .5},
+			Rounding:  5,
 		},
 		Image: ImageStyle{gfx.White},
 		ImageButton: ImageButtonStyle{

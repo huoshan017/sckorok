@@ -1,9 +1,9 @@
 package effect
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/gfx"
-	"korok.io/korok/math"
+	"sckorok/gfx"
+	"sckorok/math"
+	"sckorok/math/f32"
 )
 
 // FireSimulator can simulate the fire effect.
@@ -14,19 +14,19 @@ type ExplosionSimulator struct {
 	LifeController
 	VisualController
 
-	velocity Channel_v2
+	velocity   Channel_v2
 	deltaColor Channel_v4
 
 	// Configuration.
-	Config struct{
+	Config struct {
 		Duration, Rate float32
-		Life Var
-		Size Var
-		Color TwoColor
-		Position [2]Var
-		Angle Var
-		Speed Var
-		Additive bool
+		Life           Var
+		Size           Var
+		Color          TwoColor
+		Position       [2]Var
+		Angle          Var
+		Speed          Var
+		Additive       bool
 	}
 }
 
@@ -40,7 +40,7 @@ func NewExplosionSimulator(cap int) *ExplosionSimulator {
 
 	// config
 	sim.Config.Duration = .1
-	sim.Config.Rate = float32(cap)/sim.Config.Duration
+	sim.Config.Rate = float32(cap) / sim.Config.Duration
 	sim.Config.Life = Var{3, 1}
 	sim.Config.Color = TwoColor{f32.Vec4{1, 1, 0, 1}, f32.Vec4{.973, .349, 0, 1}, true}
 	sim.Config.Size = Var{15, 10}
@@ -102,7 +102,7 @@ func (f *ExplosionSimulator) newParticle(new int) {
 		f.ParticleSize[i] = f.Config.Size.Random()
 		startColor := f.Config.Color.Random()
 		f.Color[i] = startColor
-		invLife := 1/f.Life[i]
+		invLife := 1 / f.Life[i]
 		f.deltaColor[i] = f32.Vec4{
 			-startColor[0] * invLife,
 			-startColor[1] * invLife,
@@ -116,7 +116,7 @@ func (f *ExplosionSimulator) newParticle(new int) {
 
 		a := f.Config.Angle.Random()
 		s := f.Config.Speed.Random()
-		f.velocity[i] = f32.Vec2{math.Cos(a)*s, math.Sin(a)*s}
+		f.velocity[i] = f32.Vec2{math.Cos(a) * s, math.Sin(a) * s}
 		f.Rotation[i] = a
 	}
 }
@@ -124,4 +124,3 @@ func (f *ExplosionSimulator) newParticle(new int) {
 func (f *ExplosionSimulator) Visualize(buf []gfx.PosTexColorVertex, tex gfx.Tex2D) {
 	f.VisualController.Visualize(buf, tex, f.Live, f.Config.Additive)
 }
-

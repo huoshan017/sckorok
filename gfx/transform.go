@@ -1,8 +1,8 @@
 package gfx
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/engi"
+	"sckorok/engi"
+	"sckorok/math/f32"
 )
 
 /**
@@ -22,7 +22,7 @@ const STEP = 64
 const none = 0
 
 type SRT struct {
-	Scale f32.Vec2
+	Scale    f32.Vec2
 	Rotation float32
 	Position f32.Vec2
 }
@@ -167,7 +167,7 @@ func (xf *Transform) setRotation(parent *SRT, rotation float32) {
 	}
 }
 
-func (xf *Transform) LinkChildren(list... *Transform) {
+func (xf *Transform) LinkChildren(list ...*Transform) {
 	for _, c := range list {
 		xf.LinkChild(c)
 	}
@@ -243,16 +243,16 @@ func (xf *Transform) reset() {
 }
 
 type TransformTable struct {
- 	comps []Transform
-	_map  map[uint32]int
+	comps      []Transform
+	_map       map[uint32]int
 	index, cap int
 }
 
 func NewTransformTable(cap int) *TransformTable {
 	return &TransformTable{
-		cap:cap,
-		_map:make(map[uint32]int),
-		index:1, // skip first
+		cap:   cap,
+		_map:  make(map[uint32]int),
+		index: 1, // skip first
 	}
 }
 
@@ -260,7 +260,7 @@ func NewTransformTable(cap int) *TransformTable {
 // Return the old one, if it already exist .
 func (tt *TransformTable) NewComp(entity engi.Entity) (xf *Transform) {
 	if size := len(tt.comps); tt.index >= size {
-		tt.comps = transformResize(tt.comps, size + STEP)
+		tt.comps = transformResize(tt.comps, size+STEP)
 	}
 	ei := entity.Index()
 	if v, ok := tt._map[ei]; ok {
@@ -300,7 +300,7 @@ func (tt *TransformTable) Alive(entity engi.Entity) bool {
 func (tt *TransformTable) Delete(entity engi.Entity) {
 	ei := entity.Index()
 	if v, ok := tt._map[ei]; ok {
-		if tail := tt.index -1; v != tail && tail > 0 {
+		if tail := tt.index - 1; v != tail && tail > 0 {
 			tt.comps[v] = tt.comps[tail]
 			tt.relink(uint16(tail), uint16(v))
 
@@ -335,7 +335,6 @@ func (tt *TransformTable) relink(old, new uint16) {
 	}
 }
 
-
 func (tt *TransformTable) Destroy() {
 	tt.comps = make([]Transform, 0)
 	tt._map = make(map[uint32]int)
@@ -343,7 +342,7 @@ func (tt *TransformTable) Destroy() {
 }
 
 func (tt *TransformTable) Size() (size, cap int) {
-	return tt.index-1, tt.cap
+	return tt.index - 1, tt.cap
 }
 
 func transformResize(slice []Transform, size int) []Transform {

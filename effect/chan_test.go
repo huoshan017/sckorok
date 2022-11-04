@@ -1,13 +1,13 @@
 package effect
 
 import (
+	"sckorok/math/f32"
 	"testing"
-	"korok.io/korok/math/f32"
 )
 
 func TestChannel_f32(t *testing.T) {
 	p := Channel_f32(make([]float32, 1024))
-	n  := 10
+	n := 10
 
 	p.Add(int32(n), 8)
 
@@ -38,7 +38,7 @@ func TestChannel_f32(t *testing.T) {
 	p.Integrate(10, v, 2)
 
 	// p' = p + v*dt
-	pp := float32(8 + 1.0/60 * 2)
+	pp := float32(8 + 1.0/60*2)
 	for i := 0; i < n; i++ {
 		if p[i] != pp {
 			t.Error("err: chanf32.integrate")
@@ -68,7 +68,7 @@ func TestChannel_v2(t *testing.T) {
 	v.SetConst(int32(n), 16, 32)
 	p.Integrate(int32(n), v, 1.0/60)
 
-	p1, p2 := float32(8 + 16 * 1.0/60), float32(16 + 32 * 1.0/60)
+	p1, p2 := float32(8+16*1.0/60), float32(16+32*1.0/60)
 	for i := 0; i < n; i++ {
 		if p[i][0] != p1 || p[i][1] != p2 {
 			t.Error("err: chanv2.Integrate")

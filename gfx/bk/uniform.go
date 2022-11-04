@@ -1,9 +1,10 @@
 package bk
 
 import (
-	"korok.io/korok/hid/gl"
+	"sckorok/hid/gl"
 	"unsafe"
 )
+
 const (
 	UNIFORM_BUFFER_SIZE = 16 << 10
 )
@@ -15,13 +16,13 @@ type UniformType uint8
 /// float 在 GPU 中表现为 vec4
 const (
 	UniformStart UniformType = iota
-	UniformMat4 		// mat4 array
-	UniformMat3 		// mat3 array
-	UniformVec4 		// vec4 array
-	UniformVec1 		// float array
-	UniformInt1 		// int array
+	UniformMat4              // mat4 array
+	UniformMat3              // mat3 array
+	UniformVec4              // vec4 array
+	UniformVec1              // float array
+	UniformInt1              // int array
 
-	UniformSampler 		// sampler
+	UniformSampler // sampler
 
 	UniformEnd
 )
@@ -118,11 +119,11 @@ func Uniform_encode(uType UniformType, loc, size, num uint8) uint32 {
 }
 
 var g_uniform_type2size = [UniformEnd]uint8{
-	0,				// ignore
-	16 * 4,			// mat4
-	9  * 4,			// mat3
-	4  * 4,			// vec4
-	4,				// vec1(float32)
-	4,				// int32
-	4,				// sampler
+	0,      // ignore
+	16 * 4, // mat4
+	9 * 4,  // mat3
+	4 * 4,  // vec4
+	4,      // vec1(float32)
+	4,      // int32
+	4,      // sampler
 }

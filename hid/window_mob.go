@@ -1,3 +1,4 @@
+//go:build android || ios
 // +build android ios
 
 package hid
@@ -9,7 +10,7 @@ import (
 	"golang.org/x/mobile/event/paint"
 	"golang.org/x/mobile/event/size"
 	"golang.org/x/mobile/event/touch"
-	"korok.io/korok/hid/gl"
+	"sckorok/hid/gl"
 
 	"os"
 	"sync"

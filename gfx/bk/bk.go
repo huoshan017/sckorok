@@ -2,9 +2,9 @@
 package bk
 
 import (
-	"korok.io/korok/math/f32"
-	"unsafe"
 	"log"
+	"sckorok/math/f32"
+	"unsafe"
 )
 
 // SetDebug set debug Flags, DebugResMan enable ResourceManager's log output and
@@ -122,7 +122,7 @@ func Flush() int {
 }
 
 func Dump() {
-	size := gRenderQ.drawCallNum;
+	size := gRenderQ.drawCallNum
 	drawCall := gRenderQ.drawCallList[:size]
 	log.Println("drawCall:", drawCall)
 }

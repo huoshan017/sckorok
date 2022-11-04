@@ -1,10 +1,10 @@
 package font
 
 import (
-	"korok.io/korok/hid/gl"
+	"sckorok/hid/gl"
 
-	"image"
 	"fmt"
+	"image"
 )
 
 // toRGBA translate the given image to RGBA format if necessary.
@@ -38,7 +38,7 @@ func toRGBA(src image.Image, scale int) *image.RGBA {
 				for scx := 0; scx < scale; scx++ {
 					dst.Set(dx+scx, dy+scy, pixel)
 				}
- 			}
+			}
 		}
 	}
 	return dst
@@ -53,4 +53,3 @@ func checkGLError() error {
 
 	return fmt.Errorf("GL error: %d", errno)
 }
-

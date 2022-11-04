@@ -1,7 +1,7 @@
 package gfx
 
 import (
-	"korok.io/korok/gfx/bk"
+	"sckorok/gfx/bk"
 	"unsafe"
 )
 
@@ -17,11 +17,12 @@ type Tex2D interface {
 
 // Anchor type
 type Anchor uint8
-const(
+
+const (
 	ANCHOR_CENTER Anchor = 0x00
 	ANCHOR_LEFT          = 0x01
 	ANCHOR_RIGHT         = 0x02
-	ANCHOR_UP  			 = 0x04
+	ANCHOR_UP            = 0x04
 	ANCHOR_DOWN          = 0x08
 )
 
@@ -30,11 +31,10 @@ type Size struct {
 }
 
 type Region struct {
-	X1, Y1 float32
-	X2, Y2 float32
+	X1, Y1  float32
+	X2, Y2  float32
 	Rotated bool
 }
-
 
 type bkTex struct {
 	id, padding uint16
@@ -56,7 +56,7 @@ func (tex bkTex) Size() (sz Size) {
 }
 
 func NewTex(id uint16) Tex2D {
-	return bkTex{id:id}
+	return bkTex{id: id}
 }
 
 // SubTexture = (atlas-id << 16) + SubTexture-id
@@ -107,9 +107,9 @@ func (at *Atlas) initialize(size int) {
 		szSize   = size * int(sizeOfSize)
 	)
 
-	buffer := make([]byte, szRegion + szSize)
-	at.regions = (*[1<<16]Region)(unsafe.Pointer(&buffer[0]))[:size]
-	at.sizes = (*[1<<16]Size)(unsafe.Pointer(&buffer[szRegion]))[:size]
+	buffer := make([]byte, szRegion+szSize)
+	at.regions = (*[1 << 16]Region)(unsafe.Pointer(&buffer[0]))[:size]
+	at.sizes = (*[1 << 16]Size)(unsafe.Pointer(&buffer[szRegion]))[:size]
 	at.names = make(map[string]int, size)
 	at.index = 0
 	at.size = uint16(size)
@@ -122,21 +122,22 @@ func (at *Atlas) release() {
 }
 
 func (at *Atlas) AddItem(x, y, w, h float32, name string, rotated bool) {
-	ii := at.index; at.index++
+	ii := at.index
+	at.index++
 
 	at.sizes[ii] = Size{w, h}
 	at.names[name] = int(ii)
 
 	if rotated {
 		at.regions[ii] = Region{
-			X1: x/at.w, Y1: y/at.h,
-			X2: (x+h)/at.w, Y2:(y+w)/at.h,
-			Rotated:true,
+			X1: x / at.w, Y1: y / at.h,
+			X2: (x + h) / at.w, Y2: (y + w) / at.h,
+			Rotated: true,
 		}
 	} else {
 		at.regions[ii] = Region{
-			X1: x/at.w, Y1: y/at.h,
-			X2: (x+w)/at.w, Y2:(y+h)/at.h,
+			X1: x / at.w, Y1: y / at.h,
+			X2: (x + w) / at.w, Y2: (y + h) / at.h,
 		}
 	}
 }
@@ -144,7 +145,7 @@ func (at *Atlas) AddItem(x, y, w, h float32, name string, rotated bool) {
 func (at *Atlas) GetByName(name string) (tex SubTex, ok bool) {
 	if v, ook := at.names[name]; ook {
 		ok = true
-		tex = SubTex{uint32(at.aid) << 16 + uint32(v)}
+		tex = SubTex{uint32(at.aid)<<16 + uint32(v)}
 	}
 	return
 }
@@ -152,7 +153,7 @@ func (at *Atlas) GetByName(name string) (tex SubTex, ok bool) {
 func (at *Atlas) GetByIndex(index int) (tex SubTex, ok bool) {
 	if index < int(at.size) {
 		ok = true
-		tex = SubTex{uint32(at.aid) << 16 + uint32(index)}
+		tex = SubTex{uint32(at.aid)<<16 + uint32(index)}
 	}
 	return
 }
@@ -168,7 +169,7 @@ func (at *Atlas) Size(ii int) Size {
 // Texture Resource Manager
 type TexManager struct {
 	atlases []Atlas
-	frees []uint16
+	frees   []uint16
 
 	// name to id
 	names map[string]int
@@ -178,13 +179,13 @@ type TexManager struct {
 }
 
 // 纹理图集的管理是以纹理为单位.
-func (tm *TexManager) NewAtlas(id uint16, size int, name string) (at *Atlas){
+func (tm *TexManager) NewAtlas(id uint16, size int, name string) (at *Atlas) {
 	if n := len(tm.frees); n > 0 {
 		at = &tm.atlases[tm.frees[size-1]]
 		tm.frees = tm.frees[:size-1]
 	} else {
 		ii := len(tm.atlases)
-		tm.atlases = append(tm.atlases, Atlas{aid:uint16(ii)})
+		tm.atlases = append(tm.atlases, Atlas{aid: uint16(ii)})
 		at = &tm.atlases[ii]
 		tm.names[name] = ii
 	}
@@ -243,7 +244,7 @@ var R *TexManager
 
 // init
 func init() {
-	R = &TexManager{names:make(map[string]int, 0)}
+	R = &TexManager{names: make(map[string]int, 0)}
 
 	sizeOfRegion = unsafe.Sizeof(Region{})
 	sizeOfSize = unsafe.Sizeof(Size{})

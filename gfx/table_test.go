@@ -1,8 +1,8 @@
 package gfx
 
 import (
+	"sckorok/engi"
 	"testing"
-	"korok.io/korok/engi"
 )
 
 // Test CRUD operation for SpriteTable
@@ -40,7 +40,7 @@ func TestSpriteTable(t *testing.T) {
 
 	// delete 5
 	for i, e := range eList {
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			st.Delete(e)
 		}
 	}
@@ -51,7 +51,7 @@ func TestSpriteTable(t *testing.T) {
 
 	// test left
 	for i, e := range eList {
-		if i % 2 == 1 {
+		if i%2 == 1 {
 			if comp := st.Comp(e); comp == nil || comp.Entity != e {
 				t.Error("fail to keep entity:", e)
 			}
@@ -83,7 +83,7 @@ func TestSpriteTableResize(t *testing.T) {
 	}
 
 	if size, _ := st.Size(); size != (len(list30) + len(list100)) {
-		t.Errorf("fail to create Comps: %d/%d", size, len(list30) + len(list100))
+		t.Errorf("fail to create Comps: %d/%d", size, len(list30)+len(list100))
 	}
 
 	list := append(list100, list30...)
@@ -129,7 +129,7 @@ func TestTextTable(t *testing.T) {
 
 	// delete 5
 	for i, e := range eList {
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			tt.Delete(e)
 		}
 	}
@@ -140,7 +140,7 @@ func TestTextTable(t *testing.T) {
 
 	// test left
 	for i, e := range eList {
-		if i % 2 == 1 {
+		if i%2 == 1 {
 			if comp := tt.Comp(e); comp == nil || comp.Entity != e {
 				t.Error("fail to keep entity:", e)
 			}
@@ -150,7 +150,6 @@ func TestTextTable(t *testing.T) {
 			}
 		}
 	}
-
 
 }
 
@@ -175,7 +174,7 @@ func TestTextTableResize(t *testing.T) {
 	}
 
 	if size, _ := tt.Size(); size != (len(list30) + len(list100)) {
-		t.Errorf("fail to create Comps: %d/%d", size, len(list30) + len(list100))
+		t.Errorf("fail to create Comps: %d/%d", size, len(list30)+len(list100))
 	}
 
 	list := append(list100, list30...)
@@ -221,7 +220,7 @@ func TestMeshTable(t *testing.T) {
 
 	// delete 5
 	for i, e := range eList {
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			mt.Delete(e)
 		}
 	}
@@ -232,7 +231,7 @@ func TestMeshTable(t *testing.T) {
 
 	// test left
 	for i, e := range eList {
-		if i % 2 == 1 {
+		if i%2 == 1 {
 			if comp := mt.Comp(e); comp == nil || comp.Entity != e {
 				t.Error("fail to keep entity:", e)
 			}
@@ -242,7 +241,6 @@ func TestMeshTable(t *testing.T) {
 			}
 		}
 	}
-
 
 }
 
@@ -267,7 +265,7 @@ func TestMeshTableResize(t *testing.T) {
 	}
 
 	if size, _ := mt.Size(); size != (len(list30) + len(list100)) {
-		t.Errorf("fail to create Comps: %d/%d", size, len(list30) + len(list100))
+		t.Errorf("fail to create Comps: %d/%d", size, len(list30)+len(list100))
 	}
 
 	list := append(list100, list30...)
@@ -277,5 +275,3 @@ func TestMeshTableResize(t *testing.T) {
 		}
 	}
 }
-
-

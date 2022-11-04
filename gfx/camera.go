@@ -1,12 +1,13 @@
 package gfx
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/engi"
-	"korok.io/korok/math"
+	"sckorok/engi"
+	"sckorok/math"
+	"sckorok/math/f32"
 )
 
 type CameraMode uint8
+
 const (
 	Perspective CameraMode = iota
 	Orthographic
@@ -16,25 +17,25 @@ const (
 type Camera struct {
 	Eye f32.Vec3
 	//
-	bound struct{
+	bound struct {
 		left, top, right, bottom float32
 	}
-	mat struct{
-		x, y float32
+	mat struct {
+		x, y   float32
 		sx, sy float32
-		rt float32
+		rt     float32
 	}
-	view struct{
-		w, h float32
-		ratio float32  // ratio=w/h
-		scale, invScale f32.Vec2  // scale=view_width/screen_width
+	view struct {
+		w, h            float32
+		ratio           float32  // ratio=w/h
+		scale, invScale f32.Vec2 // scale=view_width/screen_width
 	}
 	follow engi.Entity
 
-	desire struct{
+	desire struct {
 		w, h float32
 	}
-	screen struct{
+	screen struct {
 		w, h float32
 	}
 }
@@ -48,13 +49,13 @@ func (c *Camera) initialize() {
 	c.mat.sx, c.mat.sy = 1, 1
 }
 
-func (c *Camera) P() (left, right, bottom, top float32){
-	hx := c.view.w*c.mat.sx/2
-	hy := c.view.h*c.mat.sy/2
-	left   = c.mat.x - hx
-	right  = c.mat.x + hx
+func (c *Camera) P() (left, right, bottom, top float32) {
+	hx := c.view.w * c.mat.sx / 2
+	hy := c.view.h * c.mat.sy / 2
+	left = c.mat.x - hx
+	right = c.mat.x + hx
 	bottom = c.mat.y - hy
-	top    = c.mat.y + hy
+	top = c.mat.y + hy
 	return
 }
 
@@ -62,7 +63,7 @@ func (c *Camera) View() (x, y, w, h float32) {
 	return c.mat.x, c.mat.y, c.view.w, c.view.h
 }
 
-func (c *Camera) Bounding() (left, top, right, bottom float32){
+func (c *Camera) Bounding() (left, top, right, bottom float32) {
 	return c.bound.left, c.bound.top, c.bound.right, c.bound.bottom
 }
 
@@ -75,8 +76,8 @@ func (c *Camera) Screen2Scene(x, y float32) (x1, y1 float32) {
 
 // Scene2Screen converts (x,y) in game's world coordinate to screen coordinate.
 func (c *Camera) Scene2Screen(x, y float32) (x1, y1 float32) {
-	x1 =  (x + c.view.w/2 - c.mat.x)*c.view.invScale[0]
-	y1 = -(y - c.view.h/2 - c.mat.y)*c.view.invScale[1]
+	x1 = (x + c.view.w/2 - c.mat.x) * c.view.invScale[0]
+	y1 = -(y - c.view.h/2 - c.mat.y) * c.view.invScale[1]
 	return
 }
 
@@ -84,7 +85,7 @@ func (c *Camera) Flow(entity engi.Entity) {
 	c.follow = entity
 }
 
-func (c *Camera) Position() (x,y float32) {
+func (c *Camera) Position() (x, y float32) {
 	return c.mat.x, c.mat.y
 }
 
@@ -132,7 +133,7 @@ func (c *Camera) SetBound(left, top, right, bottom float32) {
 	c.clamp()
 }
 
-func (c *Camera) Screen() (w,h float32) {
+func (c *Camera) Screen() (w, h float32) {
 	return c.screen.w, c.screen.h
 }
 
@@ -159,30 +160,30 @@ func (c *Camera) SetDesiredViewport(w, h float32) {
 
 	if w != 0 && h != 0 {
 		c.view.w, c.view.h = w, h
-		c.view.ratio = w/h
+		c.view.ratio = w / h
 		c.view.scale = f32.Vec2{
-			w/c.screen.w,
-			h/c.screen.h,
+			w / c.screen.w,
+			h / c.screen.h,
 		}
-		c.view.invScale =  f32.Vec2 {
-			c.screen.w/w,
-			c.screen.h/h,
+		c.view.invScale = f32.Vec2{
+			c.screen.w / w,
+			c.screen.h / h,
 		}
 	} else if w == 0 {
-		ratio := c.screen.w/c.screen.h
+		ratio := c.screen.w / c.screen.h
 		c.view.w = ratio * h
 		c.view.h = h
 		c.view.ratio = ratio
 		scale, invScale := h/c.screen.h, c.screen.h/h
-		c.view.scale = f32.Vec2{ scale, scale}
+		c.view.scale = f32.Vec2{scale, scale}
 		c.view.invScale = f32.Vec2{invScale, invScale}
 	} else if h == 0 {
-		ratio := c.screen.w/c.screen.h
+		ratio := c.screen.w / c.screen.h
 		c.view.w = w
-		c.view.h = w/ratio
+		c.view.h = w / ratio
 		c.view.ratio = ratio
 		scale, invScale := w/c.screen.w, c.screen.w/w
-		c.view.scale = f32.Vec2{ scale, scale}
+		c.view.scale = f32.Vec2{scale, scale}
 		c.view.invScale = f32.Vec2{invScale, invScale}
 	}
 
@@ -213,14 +214,15 @@ func (c *Camera) InView(xf *Transform, size, gravity f32.Vec2) bool {
 	if xf.world.Rotation == 0 { // happy path
 		p := xf.world.Position
 		size[0], size[1] = size[0]*xf.world.Scale[0], size[1]*xf.world.Scale[1]
-		a := AABB{p[0]-size[0]*gravity[0], p[1]-size[1]*gravity[1], size[0], size[1]}
-		b := AABB{c.mat.x-w/2, c.mat.y-h/2, w, h}
+		a := AABB{p[0] - size[0]*gravity[0], p[1] - size[1]*gravity[1], size[0], size[1]}
+		b := AABB{c.mat.x - w/2, c.mat.y - h/2, w, h}
 		return OverlapAB(&a, &b)
 	} else {
 		srt := xf.world
-		m := mat3{}; m.Initialize(srt.Position[0], srt.Position[1], srt.Rotation, srt.Scale[0], srt.Scale[1])
+		m := mat3{}
+		m.Initialize(srt.Position[0], srt.Position[1], srt.Rotation, srt.Scale[0], srt.Scale[1])
 		// center and extent
-		cx, cy := -size[0]*gravity[0] + size[0]/2, -size[1]*gravity[1] + size[1]/2
+		cx, cy := -size[0]*gravity[0]+size[0]/2, -size[1]*gravity[1]+size[1]/2
 		ex, ey := size[0]/2, size[1]/2
 
 		// transform center
@@ -233,8 +235,8 @@ func (c *Camera) InView(xf *Transform, size, gravity f32.Vec2) bool {
 			}
 		}
 		ex, ey = m.TransformNormal(ex, ey)
-		a := AABB{cx-ex, cy-ey, ex*2, ey*2}
-		b := AABB{c.mat.x-w/2, c.mat.y-h/2, w, h}
+		a := AABB{cx - ex, cy - ey, ex * 2, ey * 2}
+		b := AABB{c.mat.x - w/2, c.mat.y - h/2, w, h}
 		return OverlapAB(&a, &b)
 	}
 }
@@ -246,8 +248,8 @@ func (m *mat3) Initialize(x, y, angle, sx, sy float32) {
 
 	m[0] = c * sx
 	m[1] = s * sx
-	m[3] =  - s * sy
-	m[4] =  + c * sy
+	m[3] = -s * sy
+	m[4] = +c * sy
 	m[6] = x
 	m[7] = y
 

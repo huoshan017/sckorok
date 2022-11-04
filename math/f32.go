@@ -1,10 +1,10 @@
 package math
 
 import (
-	"unsafe"
-	"math/rand"
 	"math"
-	"korok.io/korok/math/f32"
+	"math/rand"
+	"sckorok/math/f32"
+	"unsafe"
 )
 
 const MaxFloat32 float32 = 3.40282346638528859811704183484516925440e+38
@@ -20,14 +20,13 @@ func InvSqrt(x float32) float32 {
 	return x
 }
 
-func InvLength(x, y , fail float32) float32 {
-	return 1/float32(math.Sqrt(float64(x*x + y*y)))
+func InvLength(x, y, fail float32) float32 {
+	return 1 / float32(math.Sqrt(float64(x*x+y*y)))
 }
-
 
 /// a faster way ?
 func Random(low, high float32) float32 {
-	return low + (high - low) * rand.Float32()
+	return low + (high-low)*rand.Float32()
 }
 
 func ABS(a float32) float32 {
@@ -51,7 +50,7 @@ func Min(a, b float32) float32 {
 	return b
 }
 
-func Clamp(v, left, right float32) float32{
+func Clamp(v, left, right float32) float32 {
 	if v > right {
 		return right
 	}
@@ -91,14 +90,13 @@ func Degree(r float32) float32 {
 	return r * 180 / Pi
 }
 
-
 func AngleTo(v1, v2 f32.Vec2) (dot float32) {
 	l1 := InvLength(v1[0], v1[1], 1)
 	l2 := InvLength(v2[0], v2[1], 1)
 
 	x1, y1 := v1[0]*l1, v1[1]*l1
 	x2, y2 := v2[0]*l2, v2[1]*l2
-	dot = x1 * x2 + y1 * y2
+	dot = x1*x2 + y1*y2
 	return
 }
 

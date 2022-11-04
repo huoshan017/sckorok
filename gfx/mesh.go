@@ -1,12 +1,12 @@
 package gfx
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/gfx/bk"
-	"korok.io/korok/engi"
+	"sckorok/engi"
+	"sckorok/gfx/bk"
+	"sckorok/math/f32"
 
+	"sckorok/math"
 	"unsafe"
-	"korok.io/korok/math"
 )
 
 /// MeshComp and MeshTable
@@ -20,8 +20,8 @@ type Mesh struct {
 	textureId uint16
 	padding   uint16
 
-	IndexId   uint16
-	VertexId  uint16
+	IndexId  uint16
+	VertexId uint16
 
 	FirstVertex uint16
 	NumVertex   uint16
@@ -34,7 +34,7 @@ type MeshComp struct {
 	engi.Entity
 	Mesh
 	zOrder
-	size f32.Vec2
+	size    f32.Vec2
 	visible bool
 }
 
@@ -51,13 +51,13 @@ func (m *MeshComp) SetVisible(v bool) {
 }
 
 func (m *Mesh) Setup() {
-	mem_v := bk.Memory{unsafe.Pointer(&m.vertex[0]), uint32(len(m.vertex)) * 20 }
-	if id, _:= bk.R.AllocVertexBuffer(mem_v, 20); id != bk.InvalidId {
+	mem_v := bk.Memory{unsafe.Pointer(&m.vertex[0]), uint32(len(m.vertex)) * 20}
+	if id, _ := bk.R.AllocVertexBuffer(mem_v, 20); id != bk.InvalidId {
 		m.VertexId = id
 	}
 
 	mem_i := bk.Memory{unsafe.Pointer(&m.index[0]), uint32(len(m.index)) * 2}
-	if id, _:= bk.R.AllocIndexBuffer(mem_i); id != bk.InvalidId {
+	if id, _ := bk.R.AllocIndexBuffer(mem_i); id != bk.InvalidId {
 		m.IndexId = id
 	}
 
@@ -67,30 +67,29 @@ func (m *Mesh) Setup() {
 	m.NumIndex = uint16(len(m.index))
 }
 
-func (m*Mesh) SetTexture(id uint16) {
+func (m *Mesh) SetTexture(id uint16) {
 	m.textureId = id
 }
 
-func (m*Mesh) SetVertex(v []PosTexColorVertex) {
+func (m *Mesh) SetVertex(v []PosTexColorVertex) {
 	m.vertex = v
 }
 
-func (m*Mesh) SetIndex(v []uint16) {
+func (m *Mesh) SetIndex(v []uint16) {
 	m.index = v
 }
 
-
 func (m *Mesh) Update() {
 	if ok, ib := bk.R.IndexBuffer(m.IndexId); ok {
-		ib.Update(0, uint32(len(m.index)) * uint32(UInt16Size), unsafe.Pointer(&m.index[0]), false)
+		ib.Update(0, uint32(len(m.index))*uint32(UInt16Size), unsafe.Pointer(&m.index[0]), false)
 	}
 
 	if ok, vb := bk.R.VertexBuffer(m.VertexId); ok {
-		vb.Update(0, uint32(len(m.vertex)) * uint32(PosTexColorVertexSize), unsafe.Pointer(&m.vertex[0]), false)
+		vb.Update(0, uint32(len(m.vertex))*uint32(PosTexColorVertexSize), unsafe.Pointer(&m.vertex[0]), false)
 	}
 }
 
-func (m*Mesh) Delete() {
+func (m *Mesh) Delete() {
 	if ok, ib := bk.R.IndexBuffer(m.IndexId); ok {
 		ib.Destroy()
 	}
@@ -120,20 +119,19 @@ var vertices = []float32{
 	1.0, 0.0, 1.0, 0.0,
 }
 
-
 type MeshTable struct {
-	comps []MeshComp
-	_map  map[uint32]int
+	comps      []MeshComp
+	_map       map[uint32]int
 	index, cap int
 }
 
 func NewMeshTable(cap int) *MeshTable {
-	return &MeshTable{cap:cap, _map:make(map[uint32]int)}
+	return &MeshTable{cap: cap, _map: make(map[uint32]int)}
 }
 
 func (mt *MeshTable) NewComp(entity engi.Entity) (mc *MeshComp) {
 	if size := len(mt.comps); mt.index >= size {
-		mt.comps = meshResize(mt.comps, size + STEP)
+		mt.comps = meshResize(mt.comps, size+STEP)
 	}
 	ei := entity.Index()
 	if v, ok := mt._map[ei]; ok {
@@ -145,7 +143,7 @@ func (mt *MeshTable) NewComp(entity engi.Entity) (mc *MeshComp) {
 	mc.size = f32.Vec2{64, 64}
 	mc.visible = true
 	mt._map[ei] = mt.index
-	mt.index ++
+	mt.index++
 	return
 }
 
@@ -166,7 +164,7 @@ func (mt *MeshTable) Comp(entity engi.Entity) (mc *MeshComp) {
 func (mt *MeshTable) Delete(entity engi.Entity) {
 	ei := entity.Index()
 	if v, ok := mt._map[ei]; ok {
-		if tail := mt.index -1; v != tail && tail > 0 {
+		if tail := mt.index - 1; v != tail && tail > 0 {
 			mt.comps[v] = mt.comps[tail]
 			// remap index
 			tComp := mt.comps[tail]
@@ -201,9 +199,9 @@ func meshResize(slice []MeshComp, size int) []MeshComp {
 /////
 type MeshRenderFeature struct {
 	Stack *StackAllocator
-	id int
+	id    int
 
-	R *MeshRender
+	R  *MeshRender
 	mt *MeshTable
 	xt *TransformTable
 }
@@ -214,12 +212,13 @@ func (f *MeshRenderFeature) Register(rs *RenderSystem) {
 	for _, r := range rs.RenderList {
 		switch br := r.(type) {
 		case *MeshRender:
-			f.R = br; break
+			f.R = br
+			break
 		}
 	}
 	// init table
 	for _, t := range rs.TableList {
-		switch table := t.(type){
+		switch table := t.(type) {
 		case *MeshTable:
 			f.mt = table
 		case *TransformTable:
@@ -234,10 +233,10 @@ func (f *MeshRenderFeature) Extract(v *View) {
 	var (
 		camera = v.Camera
 		xt     = f.xt
-		fi = uint32(f.id) << 16
+		fi     = uint32(f.id) << 16
 	)
 	for i, m := range f.mt.comps[:f.mt.index] {
-		if xf := xt.Comp(m.Entity); m.visible && camera.InView(xf,m.size,f32.Vec2{.5, .5}) {
+		if xf := xt.Comp(m.Entity); m.visible && camera.InView(xf, m.size, f32.Vec2{.5, .5}) {
 			sid := PackSortId(m.zOrder.value, 0)
 			val := fi + uint32(i)
 			v.RenderNodes = append(v.RenderNodes, SortObject{sid, val})
@@ -253,16 +252,16 @@ func (f *MeshRenderFeature) Draw(nodes RenderNodes) {
 	for _, b := range nodes {
 		mesh := &mt.comps[b.Value&0xFFFF]
 		entity := mesh.Entity
-		xf  := xt.Comp(entity)
+		xf := xt.Comp(entity)
 		srt := xf.world
 
 		// construct matrix from scale/rotation/translate
 		c, s := math.Cos(srt.Rotation), math.Sin(srt.Rotation)
 
-		mat4[0] = c*srt.Scale[0]
-		mat4[1] = s*srt.Scale[0]
-		mat4[4] = -s*srt.Scale[1]
-		mat4[5] = c*srt.Scale[1]
+		mat4[0] = c * srt.Scale[0]
+		mat4[1] = s * srt.Scale[0]
+		mat4[4] = -s * srt.Scale[1]
+		mat4[5] = c * srt.Scale[1]
 		mat4[8] = srt.Position[0]
 		mat4[9] = srt.Position[1]
 

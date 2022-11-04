@@ -1,8 +1,8 @@
 package auto
 
 import (
-	"korok.io/korok/gfx"
-	"korok.io/korok/gui"
+	"sckorok/gfx"
+	"sckorok/gui"
 )
 
 //	Awesome GUI System
@@ -10,7 +10,7 @@ import (
 type LayoutType int
 
 const (
-	Vertical   LayoutType = iota
+	Vertical LayoutType = iota
 	Horizontal
 	OverLay
 )
@@ -80,7 +80,7 @@ func Button(id gui.ID, text string, style *gui.ButtonStyle, p *Options) (event g
 	return gLayoutMan.Button(id, text, style, p)
 }
 
-func ImageButton(id gui.ID, normal, pressed gfx.Tex2D, style *gui.ImageButtonStyle, p *Options) gui.EventType{
+func ImageButton(id gui.ID, normal, pressed gfx.Tex2D, style *gui.ImageButtonStyle, p *Options) gui.EventType {
 	if style == nil {
 		style = &gContext.Theme.ImageButton
 	}
@@ -96,7 +96,7 @@ func ProgressBar(fraction float32, style *gui.ProgressBarStyle, p *Options) {
 
 }
 
-func Slider(id gui.ID, value *float32, style *gui.SliderStyle, p *Options) (v gui.EventType){
+func Slider(id gui.ID, value *float32, style *gui.SliderStyle, p *Options) (v gui.EventType) {
 	if style == nil {
 		style = &gContext.Theme.Slider
 	}
@@ -111,7 +111,7 @@ func ListView() {
 // Layout & Group
 
 // Define a view group
-func Define(name string, ) {
+func Define(name string) {
 	gLayoutMan.DefineLayout(name, Normal)
 }
 
@@ -145,11 +145,11 @@ func LayoutX(id gui.ID, gui func(g *Group), opt *Options, xt LayoutType) {
 	gLayoutMan.EndLayout()
 }
 
-
 var gLayoutMan *LayoutMan
 var gContext *gui.Context
 
 func init() {
 	gContext = gui.DefaultContext()
-	gLayoutMan = &LayoutMan{Context: gContext}; gLayoutMan.initialize()
+	gLayoutMan = &LayoutMan{Context: gContext}
+	gLayoutMan.initialize()
 }

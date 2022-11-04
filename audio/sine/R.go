@@ -3,7 +3,7 @@ package sine
 import (
 	"log"
 
-	"korok.io/korok/asset/res"
+	"sckorok/asset/res"
 )
 
 type FileType uint8

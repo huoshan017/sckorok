@@ -1,11 +1,11 @@
 package gfx
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/gfx/bk"
+	"sckorok/gfx/bk"
+	"sckorok/math/f32"
 
-	"unsafe"
 	"log"
+	"unsafe"
 )
 
 // Batch Render:
@@ -78,7 +78,7 @@ func (br *BatchRender) submit(bList []Batch) {
 		bk.SetTexture(0, br.umhSampler0, b.TextureId, 0)
 
 		// set vertex
-		bk.SetVertexBuffer(0, b.VertexId, uint32(b.firstVertex), uint32(b.numVertex) )
+		bk.SetVertexBuffer(0, b.VertexId, uint32(b.firstVertex), uint32(b.numVertex))
 		bk.SetIndexBuffer(b.IndexId, uint32(b.firstIndex), uint32(b.numIndex))
 
 		// submit draw-call
@@ -120,15 +120,15 @@ func (br *BatchRender) Flush() (num int) {
 // 之后可以把vbo管理起来，按需使用
 
 // ~ 640k per-batch, 32k vertex, 8k quad
-const MAX_BATCH_QUAD_SIZE   = uint32(8<<10)
+const MAX_BATCH_QUAD_SIZE = uint32(8 << 10)
 const MAX_BATCH_VERTEX_SIZE = 4 * MAX_BATCH_QUAD_SIZE
 
 // 管理一或多个Batch实例
 // 最多可以生成 128 个 Batch 分组
 // 最多可以使用 8 个 VBO 缓存
 type BatchContext struct {
-	vertex []PosTexColorVertex
-	vertexPos uint32
+	vertex      []PosTexColorVertex
+	vertexPos   uint32
 	firstVertex uint32
 
 	// state
@@ -140,7 +140,7 @@ type BatchContext struct {
 	BatchList [128]Batch
 }
 
-func (bc *BatchContext)init() {
+func (bc *BatchContext) init() {
 	// init shared vertex
 	bc.vertex = make([]PosTexColorVertex, MAX_BATCH_VERTEX_SIZE)
 	bc.batchUsed = 0
@@ -162,7 +162,7 @@ func (bc *BatchContext) begin(tex uint16, depth int16) {
 func (bc *BatchContext) drawComp(b BatchObject) {
 	step := uint32(b.Size())
 
-	if bc.vertexPos + step > MAX_BATCH_VERTEX_SIZE {
+	if bc.vertexPos+step > MAX_BATCH_VERTEX_SIZE {
 		bc.flushBuffer()
 		bc.end()
 
@@ -170,8 +170,8 @@ func (bc *BatchContext) drawComp(b BatchObject) {
 		bc.firstVertex = 0
 	}
 
-	buf := bc.vertex[bc.vertexPos:bc.vertexPos+step]
-	bc.vertexPos = bc.vertexPos+step
+	buf := bc.vertex[bc.vertexPos : bc.vertexPos+step]
+	bc.vertexPos = bc.vertexPos + step
 	b.Fill(buf)
 }
 
@@ -187,9 +187,9 @@ func (bc *BatchContext) end() {
 
 	batch.VertexId = bk.InvalidId
 	batch.firstVertex = 0 //uint16(bc.firstVertex)
-	batch.numVertex = uint16(bc.vertexPos-bc.firstVertex)
-	batch.firstIndex = uint16(bc.firstVertex/4 * 6)
-	batch.numIndex = uint16(batch.numVertex/4 * 6)
+	batch.numVertex = uint16(bc.vertexPos - bc.firstVertex)
+	batch.firstIndex = uint16(bc.firstVertex / 4 * 6)
+	batch.numIndex = uint16(batch.numVertex / 4 * 6)
 
 	bc.batchUsed += 1
 }
@@ -207,21 +207,20 @@ func (bc *BatchContext) reset() {
 func (bc *BatchContext) flushBuffer() {
 	var (
 		reqSize = int(bc.vertexPos)
-		stride = 20
+		stride  = 20
 	)
 
 	iid, _ := Context.SharedIndexBuffer()
 	vid, _, vb := Context.TempVertexBuffer(reqSize, stride)
 
 	// flush vertex-buffer
-	vb.Update(0, bc.vertexPos * uint32(stride), unsafe.Pointer(&bc.vertex[0]), false)
+	vb.Update(0, bc.vertexPos*uint32(stride), unsafe.Pointer(&bc.vertex[0]), false)
 
 	// backward rewrite vertex-buffer id
 	for i := bc.batchUsed; i >= 0; i-- {
 		if b := &bc.BatchList[i]; b.VertexId == bk.InvalidId {
 			b.VertexId = vid
-			b.IndexId  = iid
+			b.IndexId = iid
 		}
 	}
 }
-

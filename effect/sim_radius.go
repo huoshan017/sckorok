@@ -1,18 +1,17 @@
 package effect
 
 import (
-	"korok.io/korok/gfx"
-	"korok.io/korok/math/f32"
-	"korok.io/korok/math"
-
+	"sckorok/gfx"
+	"sckorok/math"
+	"sckorok/math/f32"
 )
 
 // RadiusConfig used to configure the RadiusSimulator.
 type RadiusConfig struct {
 	Config
 
-	Radius Range
-	Angle, AngleDelta    Var
+	Radius            Range
+	Angle, AngleDelta Var
 }
 
 // RadiusSimulator works as the radius mode of the Cocos2D's particle-system.
@@ -38,7 +37,7 @@ type RadiusSimulator struct {
 }
 
 func NewRadiusSimulator(cfg *RadiusConfig) *RadiusSimulator {
-	r := &RadiusSimulator{Pool:Pool{Cap: cfg.Max}, RadiusConfig: cfg}
+	r := &RadiusSimulator{Pool: Pool{Cap: cfg.Max}, RadiusConfig: cfg}
 	r.Pool.AddChan(Life)
 	r.Pool.AddChan(Position, PositionStart)
 	r.Pool.AddChan(Color, ColorDelta)
@@ -83,7 +82,7 @@ func (r *RadiusSimulator) Simulate(dt float32) {
 	r.radius.Integrate(n, r.radiusDelta, dt)
 
 	// 极坐标转换
-	for i := int32(0); i < n; i ++ {
+	for i := int32(0); i < n; i++ {
 		x := float32(math.Cos(r.angle[i])) * r.radius[i]
 		y := float32(math.Sin(r.angle[i])) * r.radius[i]
 		r.Position[i] = f32.Vec2{x, y}
@@ -106,11 +105,11 @@ func (r *RadiusSimulator) newParticle(new int) {
 
 	for i := start; i < r.Live; i++ {
 		r.Life[i] = cfg.Life.Random()
-		invLife := 1/r.Life[i]
+		invLife := 1 / r.Life[i]
 		r.Position[i] = f32.Vec2{cfg.X.Random(), cfg.Y.Random()}
 
 		// Color
-		var red, _g, b, a  float32 = 0, 0, 0, 1
+		var red, _g, b, a float32 = 0, 0, 0, 1
 		var redd, gd, bd, ad float32
 
 		if cfg.R.Used() {
@@ -127,7 +126,6 @@ func (r *RadiusSimulator) newParticle(new int) {
 		}
 		r.Color[i] = f32.Vec4{red, _g, b, a}
 		r.colorDelta[i] = f32.Vec4{redd, gd, bd, ad}
-
 
 		r.ParticleSize[i] = cfg.Size.Start.Random()
 		if cfg.Size.Start != cfg.Size.End {
@@ -159,5 +157,3 @@ func (r *RadiusSimulator) Visualize(buf []gfx.PosTexColorVertex, tex gfx.Tex2D) 
 func (r *RadiusSimulator) Size() (live, cap int) {
 	return r.Live, r.Cap
 }
-
-

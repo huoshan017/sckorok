@@ -1,25 +1,25 @@
 package effect
 
 import (
-	"korok.io/korok/math/f32"
-	"korok.io/korok/engi"
-	"korok.io/korok/gfx"
-	"korok.io/korok/gfx/bk"
-	"korok.io/korok/gfx/dbg"
+	"sckorok/engi"
+	"sckorok/gfx"
+	"sckorok/gfx/bk"
+	"sckorok/gfx/dbg"
+	"sckorok/math/f32"
 
-	"unsafe"
 	"log"
+	"unsafe"
 )
 
 // Particle Component
 type ParticleComp struct {
 	init bool
 	engi.Entity
-	sim Simulator
-	zOrder int16
+	sim     Simulator
+	zOrder  int16
 	visible int16
 
-	tex gfx.Tex2D
+	tex  gfx.Tex2D
 	size f32.Vec2
 }
 
@@ -89,21 +89,21 @@ func (pc *ParticleComp) SetSize(w, h float32) {
 
 // component manager
 type ParticleSystemTable struct {
-	comps []ParticleComp
-	_map   map[uint32]int
+	comps      []ParticleComp
+	_map       map[uint32]int
 	index, cap int
 }
 
 func NewParticleSystemTable(cap int) *ParticleSystemTable {
 	return &ParticleSystemTable{
-		_map:make(map[uint32]int),
-		cap:cap,
+		_map: make(map[uint32]int),
+		cap:  cap,
 	}
 }
 
 func (et *ParticleSystemTable) NewComp(entity engi.Entity) (ec *ParticleComp) {
 	if size := len(et.comps); et.index >= size {
-		et.comps = effectCompResize(et.comps, size + 64)
+		et.comps = effectCompResize(et.comps, size+64)
 	}
 	ei := entity.Index()
 	if v, ok := et._map[ei]; ok {
@@ -114,7 +114,7 @@ func (et *ParticleSystemTable) NewComp(entity engi.Entity) (ec *ParticleComp) {
 	ec.visible = 1
 	ec.size = f32.Vec2{64, 64}
 	et._map[ei] = et.index
-	et.index ++
+	et.index++
 	return
 }
 
@@ -135,7 +135,7 @@ func (et *ParticleSystemTable) Comp(entity engi.Entity) (ec *ParticleComp) {
 func (et *ParticleSystemTable) Delete(entity engi.Entity) {
 	ei := entity.Index()
 	if v, ok := et._map[ei]; ok {
-		if tail := et.index -1; v != tail && tail > 0 {
+		if tail := et.index - 1; v != tail && tail > 0 {
 			et.comps[v] = et.comps[tail]
 			// remap index
 			tComp := &et.comps[tail]
@@ -169,7 +169,7 @@ type ParticleRenderFeature struct {
 	et *ParticleSystemTable
 	xt *gfx.TransformTable
 
-	stats struct{
+	stats struct {
 		lives int
 	}
 }
@@ -180,12 +180,13 @@ func (f *ParticleRenderFeature) Register(rs *gfx.RenderSystem) {
 	for _, r := range rs.RenderList {
 		switch mr := r.(type) {
 		case *gfx.MeshRender:
-			f.MeshRender = mr; break
+			f.MeshRender = mr
+			break
 		}
 	}
 	// init table
 	for _, t := range rs.TableList {
-		switch table := t.(type){
+		switch table := t.(type) {
 		case *ParticleSystemTable:
 			f.et = table
 		case *gfx.TransformTable:
@@ -200,13 +201,13 @@ func (f *ParticleRenderFeature) Extract(v *gfx.View) {
 	var (
 		camera = v.Camera
 		xt     = f.xt
-		fi = uint32(f.id) << 16
+		fi     = uint32(f.id) << 16
 	)
 	for i, pc := range f.et.comps[:f.et.index] {
 		if xf := xt.Comp(pc.Entity); pc.visible != 0 && camera.InView(xf, pc.size, f32.Vec2{.5, .5}) {
 			sid := gfx.PackSortId(pc.zOrder, 0)
-			val := fi+uint32(i)
-			v.RenderNodes = append(v.RenderNodes, gfx.SortObject{SortId:sid,Value:val})
+			val := fi + uint32(i)
+			v.RenderNodes = append(v.RenderNodes, gfx.SortObject{SortId: sid, Value: val})
 		}
 	}
 }
@@ -214,7 +215,7 @@ func (f *ParticleRenderFeature) Extract(v *gfx.View) {
 func (f *ParticleRenderFeature) Draw(nodes gfx.RenderNodes) {
 	var (
 		requireVertexSize int
-		requireIndexSize int
+		requireIndexSize  int
 	)
 	for _, node := range nodes {
 		_, cap := f.et.comps[node.Value&0xFFFF].sim.Size()
@@ -227,8 +228,8 @@ func (f *ParticleRenderFeature) Draw(nodes gfx.RenderNodes) {
 
 	// setup mesh & matrix
 	mesh := &gfx.Mesh{
-		IndexId:f.BufferContext.indexId,
-		VertexId:f.BufferContext.vertexId,
+		IndexId:  f.BufferContext.indexId,
+		VertexId: f.BufferContext.vertexId,
 	}
 	mat4 := &f32.Mat4{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 
@@ -243,10 +244,11 @@ func (f *ParticleRenderFeature) Draw(nodes gfx.RenderNodes) {
 
 		live, _ := ps.sim.Size()
 		vsz, isz := live*4, live*6
-		buff := f.vertex[offset:offset+vsz]
+		buff := f.vertex[offset : offset+vsz]
 		ps.sim.Visualize(buff, ps.tex)
 
-		mesh.FirstVertex = uint16(offset);offset += vsz
+		mesh.FirstVertex = uint16(offset)
+		offset += vsz
 		mesh.NumVertex = uint16(vsz)
 		mesh.FirstIndex = 0
 		mesh.NumIndex = uint16(isz)
@@ -274,10 +276,10 @@ func (f *ParticleRenderFeature) Flush() {
 // 这么做同时可渲染的例子数量会受限于VBO的大小，需要一些经验数据支持
 type BufferContext struct {
 	vertexId uint16
-	indexId uint16
+	indexId  uint16
 
 	vertexSize int
-	indexSize int
+	indexSize  int
 
 	// 目前我们使用 MeshRender 来渲染粒子
 	// 所以必须支持如下的数据结构

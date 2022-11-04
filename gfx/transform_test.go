@@ -1,9 +1,9 @@
 package gfx
 
 import (
+	"sckorok/engi"
+	"sckorok/math/f32"
 	"testing"
-	"korok.io/korok/engi"
-	"korok.io/korok/math/f32"
 )
 
 func TestTransform(t *testing.T) {
@@ -57,7 +57,6 @@ func TestTransform(t *testing.T) {
 	}
 }
 
-
 // Test CRUD operation for TransformTable
 func TestTransformTable(t *testing.T) {
 	em := &engi.EntityManager{}
@@ -93,7 +92,7 @@ func TestTransformTable(t *testing.T) {
 
 	// delete 5
 	for i, e := range eList {
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			tt.Delete(e)
 		}
 	}
@@ -104,7 +103,7 @@ func TestTransformTable(t *testing.T) {
 
 	// test left
 	for i, e := range eList {
-		if i % 2 == 1 {
+		if i%2 == 1 {
 			if comp := tt.Comp(e); comp == nil || comp.Entity != e {
 				t.Error("fail to keep entity:", e)
 			}
@@ -137,7 +136,7 @@ func TestTransformTableResize(t *testing.T) {
 	}
 
 	if size, _ := tt.Size(); size != (len(list30) + len(list100)) {
-		t.Errorf("fail to create Comps: %d/%d", size, len(list30) + len(list100))
+		t.Errorf("fail to create Comps: %d/%d", size, len(list30)+len(list100))
 	}
 
 	list := append(list100, list30...)

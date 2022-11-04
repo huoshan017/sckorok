@@ -1,9 +1,9 @@
 package ween
 
-import "korok.io/korok/math/ease"
+import "sckorok/math/ease"
 
 type Animator struct {
-	en *TweenEngine
+	en    *TweenEngine
 	index int
 }
 
@@ -11,7 +11,7 @@ func (eng *TweenEngine) NewAnimator() Animator {
 	return Animator{eng, eng.New()}
 }
 
-func (am Animator) SetDuration(d float32) Animator{
+func (am Animator) SetDuration(d float32) Animator {
 	am.en.SetDuration(am.index, d)
 	return am
 }
@@ -26,12 +26,12 @@ func (am Animator) SetFunction(function ease.Function) Animator {
 	return am
 }
 
-func (am Animator) OnUpdate(cb UpdateCallback) Animator{
+func (am Animator) OnUpdate(cb UpdateCallback) Animator {
 	am.en.SetUpdateCallback(am.index, cb)
 	return am
 }
 
-func (am Animator) OnComplete(cb EndCallback) Animator{
+func (am Animator) OnComplete(cb EndCallback) Animator {
 	am.en.SetCompleteCallback(am.index, cb)
 	return am
 }
@@ -65,5 +65,3 @@ func (am Animator) Stop() {
 func (am Animator) Dispose() {
 	am.en.Delete(am.index)
 }
-
-

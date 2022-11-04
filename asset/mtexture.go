@@ -1,9 +1,9 @@
 package asset
 
 import (
-	"korok.io/korok/asset/res"
-	"korok.io/korok/gfx"
-	"korok.io/korok/gfx/bk"
+	"sckorok/asset/res"
+	"sckorok/gfx"
+	"sckorok/gfx/bk"
 
 	"encoding/json"
 	"errors"

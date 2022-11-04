@@ -1,16 +1,16 @@
 package game
 
 import (
-	"korok.io/korok/engi"
-	"korok.io/korok/gfx"
-	"korok.io/korok/effect"
-	"korok.io/korok/anim"
-	"korok.io/korok/anim/frame"
-	"korok.io/korok/asset"
-	"korok.io/korok/hid/input"
-	"korok.io/korok/gfx/dbg"
-	"korok.io/korok/gui"
-	"korok.io/korok/audio"
+	"sckorok/anim"
+	"sckorok/anim/frame"
+	"sckorok/asset"
+	"sckorok/audio"
+	"sckorok/effect"
+	"sckorok/engi"
+	"sckorok/gfx"
+	"sckorok/gfx/dbg"
+	"sckorok/gui"
+	"sckorok/hid/input"
 
 	"log"
 	"reflect"
@@ -20,14 +20,13 @@ import (
 const (
 	MaxScriptSize = 1024
 
-	MaxSpriteSize = 64 << 10
+	MaxSpriteSize    = 64 << 10
 	MaxTransformSize = 64 << 10
-	MaxTextSize = 64 << 10
-	MaxMeshSize = 64 << 10
+	MaxTextSize      = 64 << 10
+	MaxMeshSize      = 64 << 10
 
 	MaxParticleSize = 1024
 )
-
 
 type Options struct {
 	W, H int
@@ -41,12 +40,12 @@ type DB struct {
 }
 
 type appState struct {
-	old struct{
-		paused bool
+	old struct {
+		paused    bool
 		lostFocus bool
 	}
-	now struct{
-		paused bool
+	now struct {
+		paused    bool
 		lostFocus bool
 	}
 	PauseCallback func(paused bool)
@@ -79,7 +78,9 @@ func (app *appState) setFocused(focused bool) {
 var G *Game
 
 type Game struct {
-	Options; FPS; DB
+	Options
+	FPS
+	DB
 
 	// scene manager
 	SceneManager
@@ -162,7 +163,8 @@ func (g *Game) Create(w, h float32, ratio float32) {
 	g.RenderSystem = rs
 
 	// init game window size
-	g.setGameSize(w, h); g.MainCamera.MoveTo(w/2, h/2)
+	g.setGameSize(w, h)
+	g.MainCamera.MoveTo(w/2, h/2)
 
 	// set table
 	rs.RequireTable(g.DB.Tables)
@@ -291,7 +293,7 @@ func (g *Game) Update() {
 
 	// ease cpu usage TODO
 	if g.now.paused || (g.now.lostFocus && dt < 0.016) {
-		time.Sleep(time.Duration((0.016-dt)*1000)*time.Millisecond)
+		time.Sleep(time.Duration((0.016-dt)*1000) * time.Millisecond)
 	}
 
 	// update input-system

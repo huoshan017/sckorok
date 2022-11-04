@@ -1,10 +1,10 @@
 package font
 
 import (
-	"korok.io/korok/math"
-	"image"
 	"fmt"
+	"image"
 	"image/color"
+	"sckorok/math"
 )
 
 // Pow2Image returns the given image, scaled to the smallest power-of-two
@@ -64,5 +64,3 @@ func copyImg(src, dst copyable) image.Image {
 	}
 	return dst
 }
-
-

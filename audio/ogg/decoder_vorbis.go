@@ -1,8 +1,9 @@
 package ogg
 
 import (
+	"sckorok/asset/res"
+
 	"github.com/jfreymuth/oggvorbis"
-	"korok.io/korok/asset/res"
 
 	"io"
 	"log"

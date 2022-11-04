@@ -1,7 +1,7 @@
 package ween
 
 import (
-	"korok.io/korok/math/ease"
+	"sckorok/math/ease"
 )
 
 type UpdateCallback func(reverse bool, f float32)
@@ -27,6 +27,7 @@ const (
 
 // Defines what this animation should do when it reaches the end.
 type LoopType uint8
+
 const (
 	Restart LoopType = iota
 	PingPong
@@ -34,24 +35,24 @@ const (
 
 // Sets how many times the animation should be repeated.
 const (
-	RepeatOnce = 1
+	RepeatOnce     = 1
 	RepeatInfinite = -1
 )
 
 // 维护动画的状态数据
 // 底层动画系统，使用float作为单位 0-1
 type Animation struct {
-	index int
-	clock, duration float32
+	index                  int
+	clock, duration        float32
 	iteration, repeatCount int
-	interpolator ease.Function
+	interpolator           ease.Function
 	LoopType
-	state struct{
+	state struct {
 		AnimState
 		dirty bool
 	}
 	reverse bool
-	delay float32
+	delay   float32
 }
 
 func (anim *Animation) Reset() {
@@ -75,7 +76,9 @@ func (anim *Animation) Animate(dt float32) (f float32) {
 			if anim.LoopType == PingPong {
 				anim.reverse = !anim.reverse
 			}
-			for;fr >= 1; { fr = fr - 1 }
+			for fr >= 1 {
+				fr = fr - 1
+			}
 		} else {
 			anim.state.AnimState = Stopped
 			anim.state.dirty = true
@@ -94,14 +97,14 @@ func (anim *Animation) Animate(dt float32) (f float32) {
 }
 
 type TweenEngine struct {
-	anims []Animation
-	values []Value
+	anims     []Animation
+	values    []Value
 	callbacks []Callback
 
 	time, scale float32
 	active, cap int
-	lookup map[int]int
-	uniqueId int
+	lookup      map[int]int
+	uniqueId    int
 }
 
 func NewEngine() *TweenEngine {
@@ -115,10 +118,11 @@ func NewEngine() *TweenEngine {
 }
 
 func (eng *TweenEngine) New() (uid int) {
-	uid = eng.uniqueId; eng.uniqueId++
+	uid = eng.uniqueId
+	eng.uniqueId++
 	index := eng.active
-	eng.active ++
-	anim := &eng.anims[index];
+	eng.active++
+	anim := &eng.anims[index]
 	anim.Reset()
 	anim.index = uid
 	eng.values[index] = Value{}
@@ -167,7 +171,7 @@ func (eng *TweenEngine) Update(dt float32) {
 		}
 	}
 	// 3. delete dead
-	var	i, j = 0, eng.active-1
+	var i, j = 0, eng.active - 1
 	for i <= j {
 		if anim := &eng.anims[i]; anim.state.AnimState == Dispose {
 			eng.lookup[eng.anims[j].index] = i
@@ -279,4 +283,3 @@ func (eng *TweenEngine) Duration(index int) float32 {
 		return 0
 	}
 }
-

@@ -1,10 +1,12 @@
-//+build !android,!ios,!js
+//go:build !android && !ios && !js
+// +build !android,!ios,!js
 
 package hid
 
 import (
+	"sckorok/hid/gl"
+
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"korok.io/korok/hid/gl"
 
 	"fmt"
 	"log"

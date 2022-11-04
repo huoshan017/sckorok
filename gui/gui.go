@@ -1,8 +1,8 @@
 package gui
 
 import (
-	"korok.io/korok/gfx"
-	"korok.io/korok/gfx/font"
+	"sckorok/gfx"
+	"sckorok/gfx/font"
 )
 
 //	Awesome GUI System
@@ -20,7 +20,7 @@ func TextSizeColored(id ID, bb Rect, text string, color gfx.Color, size float32)
 	sty := gContext.Theme.Text
 	sty.Color = color
 	sty.Size = size
-	gContext.Text(id, &bb,text, &sty)
+	gContext.Text(id, &bb, text, &sty)
 }
 
 // Widgets: InputEditor
@@ -38,7 +38,7 @@ func Button(id ID, bb Rect, text string, style *ButtonStyle) (event EventType) {
 	return gContext.Button(id, &bb, text, style)
 }
 
-func ImageButton(id ID, bb Rect, normal, pressed gfx.Tex2D, style *ImageButtonStyle) EventType{
+func ImageButton(id ID, bb Rect, normal, pressed gfx.Tex2D, style *ImageButtonStyle) EventType {
 	return gContext.ImageButton(id, normal, pressed, &bb, style)
 }
 
@@ -51,7 +51,7 @@ func ProgressBar(id ID, bb Rect, fraction float32, style *ProgressBarStyle) {
 
 }
 
-func Slider(id ID, bb Rect, value *float32, style *SliderStyle) (v EventType){
+func Slider(id ID, bb Rect, value *float32, style *SliderStyle) (v EventType) {
 	return gContext.Slider(id, &bb, value, style)
 }
 
@@ -89,7 +89,7 @@ func SetFont(font font.Font) {
 }
 
 // Set Z-Order for
-func SetZOrder(z int16) (old int16){
+func SetZOrder(z int16) (old int16) {
 	old = gContext.ZOrder
 	gContext.DrawList.ZOrder = z
 	return
@@ -125,7 +125,7 @@ func DefaultContext() *Context {
 var DebugDraw = false
 
 var ThemeLight *Theme
-var ThemeDark  *Theme
+var ThemeDark *Theme
 
 ////////// implementation
 // 应该设计一种状态管理机制，用这套机制来维护状态
@@ -135,11 +135,10 @@ var ThemeDark  *Theme
 
 var gContext *Context
 
-
 func init() {
 	// default theme
 	ThemeLight = newLightTheme()
-	ThemeDark  = newDarkTheme()
+	ThemeDark = newDarkTheme()
 
 	// default context
 	gContext = NewContext(ThemeLight)

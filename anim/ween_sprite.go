@@ -1,16 +1,16 @@
 package anim
 
 import (
-	"korok.io/korok/engi"
-	"korok.io/korok/gfx"
-	"korok.io/korok/anim/ween"
+	"sckorok/anim/ween"
+	"sckorok/engi"
+	"sckorok/gfx"
 )
 
 // Convenient methods that uses to animate the Sprite Component.
 
 // Tint the Entity to given color.
 func Tint(e engi.Entity, from, to gfx.Color) *proxyAnimator {
-	proxy := &proxyAnimator{Animator:tweenEngine.NewAnimator()}
+	proxy := &proxyAnimator{Animator: tweenEngine.NewAnimator()}
 	proxy.Animator.OnUpdate(func(reverse bool, f float32) {
 		if spr := animationSystem.st.Comp(e); spr != nil {
 			c := ween.ColorLerp(from, to, f)
@@ -28,6 +28,7 @@ func Tint(e engi.Entity, from, to gfx.Color) *proxyAnimator {
 	})
 	return proxy
 }
+
 //
 //func Alpha(e engi.Entity, from, to float32) *proxyAnimator {
 //	proxy := &proxyAnimator{Animator:tweenEngine.NewAnimator()}

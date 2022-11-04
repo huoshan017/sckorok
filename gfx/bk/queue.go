@@ -1,10 +1,10 @@
 package bk
 
 import (
-	"korok.io/korok/math/f32"
 	"log"
-	"unsafe"
+	"sckorok/math/f32"
 	"sort"
+	"unsafe"
 )
 
 type SortMode int
@@ -229,7 +229,7 @@ func (rq *RenderQueue) Submit(id uint8, program uint16, depth int32) uint32 {
 	// encode sort-key
 	sk := &rq.sk
 	sk.Layer = uint16(id)
-	sk.Order = uint16(depth+0xFFFF>>1)
+	sk.Order = uint16(depth + 0xFFFF>>1)
 
 	sk.Shader = program & IdMask // trip type
 	sk.Blend = 0
@@ -293,11 +293,11 @@ type ByKeyAscending struct {
 	v []uint16
 }
 
-func (a ByKeyAscending) Len() int           {
+func (a ByKeyAscending) Len() int {
 	return len(a.k)
 }
 
-func (a ByKeyAscending) Swap(i, j int)      {
+func (a ByKeyAscending) Swap(i, j int) {
 	a.k[i], a.k[j] = a.k[j], a.k[i]
 	a.v[i], a.v[j] = a.v[j], a.v[i]
 }
@@ -311,11 +311,11 @@ type ByKeyDescending struct {
 	v []uint16
 }
 
-func (a ByKeyDescending) Len() int           {
+func (a ByKeyDescending) Len() int {
 	return len(a.k)
 }
 
-func (a ByKeyDescending) Swap(i, j int)      {
+func (a ByKeyDescending) Swap(i, j int) {
 	a.k[i], a.k[j] = a.k[j], a.k[i]
 	a.v[i], a.v[j] = a.v[j], a.v[i]
 }
@@ -323,6 +323,3 @@ func (a ByKeyDescending) Swap(i, j int)      {
 func (a ByKeyDescending) Less(i, j int) bool {
 	return a.k[i] > a.k[j]
 }
-
-
-

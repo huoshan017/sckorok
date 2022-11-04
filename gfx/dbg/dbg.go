@@ -1,13 +1,13 @@
 package dbg
 
 import (
-	"korok.io/korok/gfx/bk"
-	"korok.io/korok/math/f32"
+	"sckorok/gfx/bk"
+	"sckorok/math/f32"
 
-	"unsafe"
-	"log"
 	"fmt"
-	"korok.io/korok/math"
+	"log"
+	"sckorok/math"
+	"unsafe"
 )
 
 type DebugEnum uint32
@@ -17,16 +17,16 @@ const (
 	Stats
 	Draw
 
-	ALL = FPS|Stats|Draw
+	ALL  = FPS | Stats | Draw
 	None = DebugEnum(0)
 )
 
-
-var screen struct{
+var screen struct {
 	w, h float32
 }
+
 // max value of z-order
-const zOrder = int32(0xFFFF>>1)
+const zOrder = int32(0xFFFF >> 1)
 
 // dbg - draw debug info
 // provide self-contained, im-gui api
@@ -59,7 +59,7 @@ func SetDebug(enum DebugEnum) {
 	DEBUG = enum
 }
 
-func SetCamera(x,y, w,h float32) {
+func SetCamera(x, y, w, h float32) {
 	gRender.SetViewPort(x, y, w, h)
 }
 
@@ -84,7 +84,7 @@ func DrawBorder(x, y, w, h, thickness float32) {
 }
 
 // draw a circle
-func DrawCircle(x,y float32, r float32) {
+func DrawCircle(x, y float32, r float32) {
 	if (DEBUG & Draw) != 0 {
 		gBuffer.Circle(x, y, r)
 	}
@@ -97,7 +97,7 @@ func DrawLine(from, to f32.Vec2) {
 }
 
 // draw string
-func DrawStr(x,y float32, str string, args ...interface{}) {
+func DrawStr(x, y float32, str string, args ...interface{}) {
 	if (DEBUG & Draw) != 0 {
 		gBuffer.String(x, y, fmt.Sprintf(str, args...), 1)
 	}
@@ -120,11 +120,10 @@ func AdvanceFrame() {
 	gBuffer.Reset()
 }
 
-
 type DebugRender struct {
 	stateFlags uint64
 	rgba       uint32
-	view struct{
+	view       struct {
 		x, y, w, h float32
 	}
 
@@ -168,7 +167,7 @@ func NewDebugRender(vsh, fsh string) *DebugRender {
 		bk.Submit(0, id, zOrder)
 	}
 	// setup buffer, we can draw 512 rect at most!!
-	dr.Buffer.init(2048*4)
+	dr.Buffer.init(2048 * 4)
 	return dr
 }
 
@@ -178,7 +177,7 @@ func (dr *DebugRender) Destroy() {
 	bk.R.Free(dr.umhSampler0)
 }
 
-func (dr *DebugRender) SetViewPort(x,y, w,h float32) {
+func (dr *DebugRender) SetViewPort(x, y, w, h float32) {
 	dr.view.x = x
 	dr.view.y = y
 	dr.view.w = w
@@ -212,7 +211,7 @@ func (dr *DebugRender) Draw() {
 	b := &dr.Buffer
 	// set vertex
 	bk.SetVertexBuffer(0, b.vertexId, 0, b.pos)
-	bk.SetIndexBuffer(dr.Buffer.indexId, 0, b.pos * 6 >> 2)
+	bk.SetIndexBuffer(dr.Buffer.indexId, 0, b.pos*6>>2)
 	// submit
 	bk.Submit(0, dr.program, zOrder)
 }
@@ -231,9 +230,9 @@ type TextShapeBuffer struct {
 
 	// gpu res
 	indexId, vertexId uint16
-	ib *bk.IndexBuffer
-	vb *bk.VertexBuffer
-	fontTexId uint16
+	ib                *bk.IndexBuffer
+	vb                *bk.VertexBuffer
+	fontTexId         uint16
 
 	// current painter color
 	color uint32
@@ -245,7 +244,7 @@ type TextShapeBuffer struct {
 func (buff *TextShapeBuffer) init(maxVertex uint32) {
 	iboSize := maxVertex * 6 / 4
 	buff.index = make([]uint16, iboSize)
-	iFormat := [6]uint16 {3, 0, 1, 3, 1, 2}
+	iFormat := [6]uint16{3, 0, 1, 3, 1, 2}
 	for i := uint32(0); i < iboSize; i += 6 {
 		copy(buff.index[i:], iFormat[:])
 		iFormat[0] += 4
@@ -279,10 +278,10 @@ func (buff *TextShapeBuffer) init(maxVertex uint32) {
 }
 
 func (buff *TextShapeBuffer) String(x, y float32, chars string, scale float32) {
-	w, h := font_width * scale, font_height * scale
+	w, h := font_width*scale, font_height*scale
 
 	for i, N := 0, len(chars); i < N; i++ {
-		b := buff.vertex[buff.pos: buff.pos+4]
+		b := buff.vertex[buff.pos : buff.pos+4]
 		buff.pos += 4
 
 		// vv := chars[0]
@@ -293,15 +292,15 @@ func (buff *TextShapeBuffer) String(x, y float32, chars string, scale float32) {
 		b[0].U, b[0].V = left, bottom
 		b[0].RGBA = buff.color
 
-		b[1].X, b[1].Y = x + w, y
+		b[1].X, b[1].Y = x+w, y
 		b[1].U, b[1].V = right, bottom
 		b[1].RGBA = buff.color
 
-		b[2].X, b[2].Y = x + w, y + h
+		b[2].X, b[2].Y = x+w, y+h
 		b[2].U, b[2].V = right, top
 		b[2].RGBA = buff.color
 
-		b[3].X, b[3].Y = x, y + h
+		b[3].X, b[3].Y = x, y+h
 		b[3].U, b[3].V = left, top
 		b[3].RGBA = buff.color
 
@@ -310,35 +309,34 @@ func (buff *TextShapeBuffer) String(x, y float32, chars string, scale float32) {
 	}
 }
 
-
 //
 //  3-------2
 //  |       |
 //  |       |
 //  0-------1
-func (buff *TextShapeBuffer) Rect(x,y, w, h float32) {
-	b := buff.vertex[buff.pos: buff.pos+4]
+func (buff *TextShapeBuffer) Rect(x, y, w, h float32) {
+	b := buff.vertex[buff.pos : buff.pos+4]
 	buff.pos += 4
 
 	b[0].X, b[0].Y = x, y
 	b[0].U, b[0].V = 2, 0
 	b[0].RGBA = buff.color
 
-	b[1].X, b[1].Y = x + w, y
+	b[1].X, b[1].Y = x+w, y
 	b[1].U, b[1].V = 2, 0
 	b[1].RGBA = buff.color
 
-	b[2].X, b[2].Y = x + w, y + h
+	b[2].X, b[2].Y = x+w, y+h
 	b[2].U, b[2].V = 2, 0
 	b[2].RGBA = buff.color
 
-	b[3].X, b[3].Y = x, y + h
+	b[3].X, b[3].Y = x, y+h
 	b[3].U, b[3].V = 2, 0
 	b[3].RGBA = buff.color
 }
 
 func (buff *TextShapeBuffer) Line(from, to f32.Vec2) {
-	b := buff.vertex[buff.pos: buff.pos+4]
+	b := buff.vertex[buff.pos : buff.pos+4]
 	buff.pos += 4
 
 	diff := to.Sub(from)
@@ -367,47 +365,47 @@ func (buff *TextShapeBuffer) Line(from, to f32.Vec2) {
 }
 
 func (buff *TextShapeBuffer) Border(x, y, w, h, thick float32) {
-	buff.Rect(x,y,w,thick)
-	buff.Rect(x,y+h-thick,w,thick)
+	buff.Rect(x, y, w, thick)
+	buff.Rect(x, y+h-thick, w, thick)
 	buff.Rect(x, y, thick, h)
-	buff.Rect(x+w-thick,y,thick,h)
+	buff.Rect(x+w-thick, y, thick, h)
 }
 
 func (buff *TextShapeBuffer) Circle(x, y float32, radius float32) {
 	var (
 		segments = 12
-		path = [24]f32.Vec2{}
-		angle = float32(3.14*2)
+		path     = [24]f32.Vec2{}
+		angle    = float32(3.14 * 2)
 	)
 
 	switch {
 	case radius < 4:
 		segments = 4
 	case radius < 100:
-		segments = int(radius/100 * 16) + 8
+		segments = int(radius/100*16) + 8
 	default:
 		segments = 24
 	}
 
 	for i := 0; i < segments; i++ {
-		a := float32(i)/float32(segments) * angle
-		x1 := x + math.Cos(a) * radius
-		y1 := y + math.Sin(a) * radius
+		a := float32(i) / float32(segments) * angle
+		x1 := x + math.Cos(a)*radius
+		y1 := y + math.Sin(a)*radius
 		path[i] = f32.Vec2{x1, y1}
 	}
 	for i := 0; i < segments; i++ {
-		j := i+1
+		j := i + 1
 		if j == segments {
 			j = 0
 		}
-		p1, p2 := path[i],path[j]
+		p1, p2 := path[i], path[j]
 		buff.Line(p1, p2)
 	}
 }
 
 func (buff *TextShapeBuffer) Update() {
 	if DEBUG != None && buff.pos > 0 {
-		buff.vb.Update(0, buff.pos * 20, unsafe.Pointer(&buff.vertex[0]), false)
+		buff.vb.Update(0, buff.pos*20, unsafe.Pointer(&buff.vertex[0]), false)
 	}
 }
 
@@ -427,4 +425,4 @@ func (buff *TextShapeBuffer) Destroy() {
 var gRender *DebugRender
 var gBuffer *TextShapeBuffer
 var hud *HudLog
-var DEBUG DebugEnum = FPS|Draw
+var DEBUG DebugEnum = FPS | Draw

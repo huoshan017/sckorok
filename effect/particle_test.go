@@ -1,8 +1,8 @@
 package effect
 
 import (
+	"sckorok/engi"
 	"testing"
-	"korok.io/korok/engi"
 )
 
 // Test CRUD operation for MeshTable
@@ -40,7 +40,7 @@ func TestMeshTable(t *testing.T) {
 
 	// delete 5
 	for i, e := range eList {
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			et.Delete(e)
 		}
 	}
@@ -51,7 +51,7 @@ func TestMeshTable(t *testing.T) {
 
 	// test left
 	for i, e := range eList {
-		if i % 2 == 1 {
+		if i%2 == 1 {
 			if comp := et.Comp(e); comp == nil || comp.Entity != e {
 				t.Error("fail to keep entity:", e)
 			}
@@ -61,7 +61,6 @@ func TestMeshTable(t *testing.T) {
 			}
 		}
 	}
-
 
 }
 
@@ -86,7 +85,7 @@ func TestMeshTableResize(t *testing.T) {
 	}
 
 	if size, _ := et.Size(); size != (len(list30) + len(list100)) {
-		t.Errorf("fail to create Comps: %d/%d", size, len(list30) + len(list100))
+		t.Errorf("fail to create Comps: %d/%d", size, len(list30)+len(list100))
 	}
 
 	list := append(list100, list30...)

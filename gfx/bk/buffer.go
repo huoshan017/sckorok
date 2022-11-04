@@ -1,11 +1,11 @@
 package bk
 
 import (
-	"korok.io/korok/hid/gl"
+	"sckorok/hid/gl"
 
+	"errors"
 	"log"
 	"unsafe"
-	"errors"
 )
 
 type IndexBuffer struct {
@@ -14,7 +14,7 @@ type IndexBuffer struct {
 	flags uint16
 }
 
-func (ib *IndexBuffer) Create(size uint32, data unsafe.Pointer, flags uint16) error{
+func (ib *IndexBuffer) Create(size uint32, data unsafe.Pointer, flags uint16) error {
 	ib.size = size
 	ib.flags = flags
 
@@ -65,7 +65,7 @@ type VertexBuffer struct {
 }
 
 /// draw indirect >= es 3.0 or gl 4.0
-func (vb *VertexBuffer) Create(size uint32, data unsafe.Pointer, layout uint16, flags uint16) error{
+func (vb *VertexBuffer) Create(size uint32, data unsafe.Pointer, layout uint16, flags uint16) error {
 	vb.size = size
 	vb.layout = layout
 	vb.target = gl.ARRAY_BUFFER

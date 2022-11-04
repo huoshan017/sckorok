@@ -1,7 +1,7 @@
 package audio
 
 import (
-	"korok.io/korok/audio/sine"
+	"sckorok/audio/sine"
 )
 
 type MusicPlayer struct {
@@ -11,13 +11,13 @@ type MusicPlayer struct {
 type ChanId int
 
 var (
-	music *sine.StreamPlayer
+	music   *sine.StreamPlayer
 	effects *sine.SoundPool
 )
 
 func Init() (err error) {
 	sine.Init(DefaultDecoderFactory)
-	music   = sine.NewStreamPlayer()
+	music = sine.NewStreamPlayer()
 	effects = sine.NewSoundPool()
 	return
 }
@@ -33,7 +33,7 @@ func AdvanceFrame() {
 
 ////////////////////// Music ////////////////////
 
-func PlayMusic(id uint16) (sp MusicPlayer, ook bool){
+func PlayMusic(id uint16) (sp MusicPlayer, ook bool) {
 	if sound, ok := sine.R.Sound(id); ok {
 		if d, ok := sound.Data.(*sine.StreamData); ok {
 			music.Play(d)
@@ -65,7 +65,7 @@ func MusicVolume() float32 {
 
 ////////////////////// Effect ////////////////////
 
-func PlayEffect(id uint16, priority int) (cid ChanId){
+func PlayEffect(id uint16, priority int) (cid ChanId) {
 	return ChanId(effects.Play(id, priority))
 }
 
@@ -81,7 +81,7 @@ func StopEffect(cid ChanId) {
 	effects.StopChan(int(cid))
 }
 
-func EffectChannelVolume(cid ChanId) (v float32, ok bool){
+func EffectChannelVolume(cid ChanId) (v float32, ok bool) {
 	return effects.GetChanVolume(int(cid))
 }
 
@@ -98,8 +98,5 @@ func SetEffectVolume(v float32) {
 	effects.SetVolume(v)
 }
 
-
 // default Audio-File-Decoder
 var DefaultDecoderFactory = &decoderFactory{}
-
-

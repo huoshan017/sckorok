@@ -1,6 +1,6 @@
 package bk
 
-import "korok.io/korok/hid/gl"
+import "sckorok/hid/gl"
 
 /// Vertex attribute type enum
 type AttrType uint8
