@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/asset"
 	"sckorok/audio"
 	"sckorok/game"
@@ -14,12 +14,12 @@ import (
 
 func main() {
 	fmt.Println("Hello Audio!!")
-	options := korok.Options{
+	options := sckorok.Options{
 		Width:  320,
 		Height: 480,
 		Title:  "Audio Test",
 	}
-	korok.Run(&options, &MainScene{})
+	sckorok.Run(&options, &MainScene{})
 }
 
 type MainScene struct {
@@ -44,23 +44,23 @@ func (m *MainScene) OnEnter(g *game.Game) {
 }
 
 func (m *MainScene) Update(dt float32) {
-	if gui.Button(1, gui.Rect{100, 100, 0, 0}, "Play", nil).JustPressed() {
+	if gui.Button(1, gui.Rect{X: 100, Y: 100, W: 0, H: 0}, "Play", nil).JustPressed() {
 		audio.PlayMusic(m.ogg)
 		log.Println("play audio")
 	}
 
-	if gui.Button(2, gui.Rect{100, 140, 0, 0}, "Stop", nil).JustPressed() {
+	if gui.Button(2, gui.Rect{X: 100, Y: 140, W: 0, H: 0}, "Stop", nil).JustPressed() {
 		// stop audio
 		audio.StopMusic()
 		log.Println("stop audio")
 	}
 
-	if gui.Button(3, gui.Rect{180, 100, 0, 0}, "Pause", nil).JustPressed() {
+	if gui.Button(3, gui.Rect{X: 180, Y: 100, W: 0, H: 0}, "Pause", nil).JustPressed() {
 		audio.PauseMusic()
 		log.Println("pause audio")
 	}
 
-	if gui.Button(4, gui.Rect{180, 140, 0, 0}, "Resume", nil).JustPressed() {
+	if gui.Button(4, gui.Rect{X: 180, Y: 140, W: 0, H: 0}, "Resume", nil).JustPressed() {
 		audio.ResumeMusic()
 		log.Println("resume audio")
 	}

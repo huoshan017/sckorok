@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/asset"
 	"sckorok/engi"
 	"sckorok/game"
@@ -28,9 +28,9 @@ func (*MainScene) Load() {
 func (m *MainScene) OnEnter(g *game.Game) {
 	tex := asset.Texture.Get("face.png")
 
-	face := korok.Entity.New()
-	korok.Sprite.NewCompX(face, tex).SetSize(50, 50)
-	korok.Transform.NewComp(face).SetPosition(f32.Vec2{100, 100})
+	face := sckorok.Entity.New()
+	sckorok.Sprite.NewCompX(face, tex).SetSize(50, 50)
+	sckorok.Transform.NewComp(face).SetPosition(f32.Vec2{100, 100})
 
 	m.face = face
 }
@@ -50,7 +50,7 @@ func (m *MainScene) Update(dt float32) {
 		speed[0] = 5
 	}
 
-	xf := korok.Transform.Comp(m.face)
+	xf := sckorok.Transform.Comp(m.face)
 	xf.MoveBy(speed[0], speed[1])
 }
 
@@ -58,10 +58,10 @@ func (*MainScene) OnExit() {
 }
 
 func main() {
-	options := &korok.Options{
+	options := &sckorok.Options{
 		Title:  "Input Controller",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(options, &MainScene{})
+	sckorok.Run(options, &MainScene{})
 }

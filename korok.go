@@ -1,4 +1,4 @@
-package korok
+package sckorok
 
 import (
 	"log"

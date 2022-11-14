@@ -1,8 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
-	"sckorok/engi"
+	"sckorok"
 	"sckorok/game"
 	"sckorok/gfx/dbg"
 	"sckorok/math"
@@ -10,7 +9,7 @@ import (
 )
 
 type MainScene struct {
-	face engi.Entity
+	//face engi.Entity
 }
 
 func (m *MainScene) OnEnter(g *game.Game) {
@@ -47,10 +46,10 @@ func (*MainScene) OnExit() {
 
 func main() {
 	// Run game
-	options := &korok.Options{
+	options := &sckorok.Options{
 		Title:  "Hello, Korok Engine",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(options, &MainScene{})
+	sckorok.Run(options, &MainScene{})
 }

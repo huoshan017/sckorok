@@ -31,10 +31,14 @@ func (f *UIRenderFeature) SetDrawList(dl *DrawList) {
 func (f *UIRenderFeature) Register(rs *gfx.RenderSystem) {
 	f.Camera = &rs.MainCamera
 	// init render
+	var b bool
 	for _, r := range rs.RenderList {
 		switch render := r.(type) {
 		case *gfx.MeshRender:
 			f.MeshRender = render
+			b = true
+		}
+		if b {
 			break
 		}
 	}
@@ -117,7 +121,7 @@ func (f *UIRenderFeature) allocBuffer(isz, vsz int) {
 			isz |= isz >> 16
 			isz++
 		}
-		id, ib := bk.R.AllocIndexBuffer(bk.Memory{nil, uint32(isz) * 2})
+		id, ib := bk.R.AllocIndexBuffer(bk.Memory{Data: nil, Size: uint32(isz) * 2})
 		f.Buffer.iid = id
 		f.Buffer.isz = isz
 		f.Buffer.index = ib

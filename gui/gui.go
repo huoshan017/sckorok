@@ -13,7 +13,6 @@ func Text(id ID, bb Rect, text string, style *TextStyle) {
 		style = &gContext.Theme.Text
 	}
 	gContext.Text(id, &bb, text, style)
-	return
 }
 
 func TextSizeColored(id ID, bb Rect, text string, color gfx.Color, size float32) {

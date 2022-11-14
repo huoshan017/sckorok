@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/asset"
 	"sckorok/game"
 	"sckorok/gfx"
@@ -63,7 +63,6 @@ func (m *MainScene) Update(dt float32) {
 }
 
 func (m *MainScene) OnExit() {
-	return
 }
 
 func (m *MainScene) Widget() {
@@ -71,28 +70,28 @@ func (m *MainScene) Widget() {
 	gui.Move(100, 60)
 
 	// draw text
-	gui.Text(2, gui.Rect{0, 0, 0, 0}, "SomeText", nil)
+	gui.Text(2, gui.Rect{X: 0, Y: 0, W: 0, H: 0}, "SomeText", nil)
 
 	// draw image
-	gui.Image(3, gui.Rect{0, 30, 30, 30}, m.face, nil)
+	gui.Image(3, gui.Rect{X: 0, Y: 30, W: 30, H: 30}, m.face, nil)
 
 	// draw image button
-	gui.ImageButton(6, gui.Rect{50, 30, 30, 30}, m.normal, m.pressed, nil)
+	gui.ImageButton(6, gui.Rect{X: 50, Y: 30, W: 30, H: 30}, m.normal, m.pressed, nil)
 
 	// draw button
-	if e := gui.Button(4, gui.Rect{0, 100, 0, 0}, "NewButton", nil); (e & gui.EventWentDown) != 0 {
+	if e := gui.Button(4, gui.Rect{X: 0, Y: 100, W: 0, H: 0}, "NewButton", nil); (e & gui.EventWentDown) != 0 {
 		log.Println("Click New Button")
 		m.showbutton = true
 	}
 	if m.showbutton {
-		if e := gui.Button(5, gui.Rect{0, 150, 0, 0}, "Dismiss", nil); (e & gui.EventWentDown) != 0 {
+		if e := gui.Button(5, gui.Rect{X: 0, Y: 150, W: 0, H: 0}, "Dismiss", nil); (e & gui.EventWentDown) != 0 {
 			log.Println("Click Old Button")
 			m.showbutton = false
 		}
 	}
 
 	// draw slider
-	gui.Slider(7, gui.Rect{100, 0, 120, 10}, &m.slide, nil)
+	gui.Slider(7, gui.Rect{X: 100, Y: 0, W: 120, H: 10}, &m.slide, nil)
 
 	// gui.DefaultContext().Layout.Dump()
 }
@@ -120,16 +119,14 @@ func (m *MainScene) Layout() {
 	}, 480, 320, auto.OverLay)
 }
 
-var b bool
-
 func main() {
 	fmt.Println("Hello World!!")
 	log.Println("")
 
-	options := &korok.Options{
+	options := &sckorok.Options{
 		Title:  "UI Test!",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(options, &MainScene{})
+	sckorok.Run(options, &MainScene{})
 }

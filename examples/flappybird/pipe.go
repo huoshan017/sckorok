@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/engi"
 	"sckorok/gfx"
 	"sckorok/math"
@@ -25,21 +25,21 @@ type Pipe struct {
 }
 
 func (p *Pipe) initialize(texTop, texBottom gfx.Tex2D) {
-	top := korok.Entity.New()
-	spr := korok.Sprite.NewComp(top)
+	top := sckorok.Entity.New()
+	spr := sckorok.Sprite.NewComp(top)
 	spr.SetSprite(texTop)
 	spr.SetSize(65, 400)
 	spr.SetGravity(.5, 0)
 
-	bottom := korok.Entity.New()
-	spr = korok.Sprite.NewComp(bottom)
+	bottom := sckorok.Entity.New()
+	spr = sckorok.Sprite.NewComp(bottom)
 	spr.SetSize(65, 400)
 	spr.SetSprite(texBottom)
 	spr.SetGravity(.5, 1)
 
 	// out of screen
-	korok.Transform.NewComp(top).SetPosition(f32.Vec2{-100, 210})
-	korok.Transform.NewComp(bottom).SetPosition(f32.Vec2{-100, 160})
+	sckorok.Transform.NewComp(top).SetPosition(f32.Vec2{-100, 210})
+	sckorok.Transform.NewComp(bottom).SetPosition(f32.Vec2{-100, 160})
 
 	p.top.Entity = top
 	p.bottom.Entity = bottom
@@ -62,8 +62,8 @@ func (p *Pipe) update(dt float32) {
 	p.top.Vec2[0] = p.x
 	p.bottom.Vec2[0] = p.x
 
-	korok.Transform.Comp(p.top.Entity).SetPosition(p.top.Vec2)
-	korok.Transform.Comp(p.bottom.Entity).SetPosition(p.bottom.Vec2)
+	sckorok.Transform.Comp(p.top.Entity).SetPosition(p.top.Vec2)
+	sckorok.Transform.Comp(p.bottom.Entity).SetPosition(p.bottom.Vec2)
 }
 
 type PipeSystem struct {
@@ -152,8 +152,8 @@ func (ps *PipeSystem) Reset() {
 	for _, p := range ps.pipes {
 		p.x = -100
 		// out of screen
-		korok.Transform.NewComp(p.top.Entity).SetPosition(f32.Vec2{-100, 210})
-		korok.Transform.NewComp(p.bottom.Entity).SetPosition(f32.Vec2{-100, 160})
+		sckorok.Transform.NewComp(p.top.Entity).SetPosition(f32.Vec2{-100, 210})
+		sckorok.Transform.NewComp(p.bottom.Entity).SetPosition(f32.Vec2{-100, 160})
 	}
 }
 

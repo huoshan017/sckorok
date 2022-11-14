@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/asset"
 	"sckorok/game"
 	"sckorok/gfx"
@@ -9,19 +9,16 @@ import (
 )
 
 var s_Vertices = []gfx.PosTexColorVertex{
-	{100.0, 100.0, 1, 1, 0xffffffff},
-	{-100.0, -100.0, 0, 0, 0xffffffff},
-	{100.0, -100.0, 1, 0, 0xffffffff},
-	{-100.0, 100.0, 0, 1, 0xffffffff},
+	{X: 100.0, Y: 100.0, U: 1, V: 1, RGBA: 0xffffffff},
+	{X: -100.0, Y: -100.0, U: 0, V: 0, RGBA: 0xffffffff},
+	{X: 100.0, Y: -100.0, U: 1, V: 0, RGBA: 0xffffffff},
+	{X: -100.0, Y: 100.0, U: 0, V: 1, RGBA: 0xffffffff},
 }
 
 var s_Index = []uint16{
 	3, 1, 2,
 	3, 2, 0,
 }
-
-var s_mesh *gfx.Mesh
-var s_render *gfx.MeshRender
 
 type MainScene struct {
 }
@@ -33,9 +30,9 @@ func (*MainScene) Load() {
 func (*MainScene) OnEnter(g *game.Game) {
 	tex2d := asset.Texture.Get("face.png")
 	// show mesh comp
-	entity := korok.Entity.New()
+	entity := sckorok.Entity.New()
 
-	comp := korok.Mesh.NewComp(entity)
+	comp := sckorok.Mesh.NewComp(entity)
 	mesh := &comp.Mesh
 
 	mesh.SetIndex(s_Index)
@@ -43,7 +40,7 @@ func (*MainScene) OnEnter(g *game.Game) {
 	mesh.Setup()
 	mesh.SetTexture(tex2d.Tex())
 
-	xf := korok.Transform.NewComp(entity)
+	xf := sckorok.Transform.NewComp(entity)
 	xf.SetPosition(f32.Vec2{200, 100})
 }
 
@@ -55,10 +52,10 @@ func (*MainScene) OnExit() {
 
 func main() {
 	// Run game
-	options := &korok.Options{
+	options := &sckorok.Options{
 		Title:  "Simple Mesh Rendering",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(options, &MainScene{})
+	sckorok.Run(options, &MainScene{})
 }

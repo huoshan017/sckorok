@@ -350,9 +350,3 @@ func transformResize(slice []Transform, size int) []Transform {
 	copy(newSlice, slice)
 	return newSlice
 }
-
-func intResize(slice []int, size int) []int {
-	newSlice := make([]int, size)
-	copy(newSlice, slice)
-	return newSlice
-}

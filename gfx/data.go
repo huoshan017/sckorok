@@ -124,8 +124,8 @@ func UnpackSortId(sortId uint32) (z int16, b uint16) {
 
 // format <x,y,u,v rgba>
 var P4C4 = []bk.VertexComp{
-	{4, bk.AttrFloat, 0, 0},
-	{4, bk.AttrUInt8, 16, 1},
+	{Num: 4, Type: bk.AttrFloat, Offset: 0, Normalized: 0},
+	{Num: 4, Type: bk.AttrUInt8, Offset: 16, Normalized: 1},
 }
 
 // vertex struct

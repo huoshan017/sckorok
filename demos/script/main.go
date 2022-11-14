@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/asset"
 	"sckorok/engi"
 	"sckorok/game"
@@ -16,11 +16,11 @@ type SpinObject struct {
 }
 
 func NewSpinObject() *SpinObject {
-	e := korok.Entity.New()
+	e := sckorok.Entity.New()
 	spin := &SpinObject{e, 0}
-	korok.Sprite.NewComp(e)
-	korok.Transform.NewComp(e)
-	korok.Script.NewComp(e, spin)
+	sckorok.Sprite.NewComp(e)
+	sckorok.Transform.NewComp(e)
+	sckorok.Script.NewComp(e, spin)
 	return spin
 }
 
@@ -42,26 +42,25 @@ func (spin *SpinObject) Destroy() {
 }
 
 func (spin *SpinObject) SetTexture(tex gfx.Tex2D) {
-	if comp := korok.Sprite.Comp(spin.Entity); comp != nil {
+	if comp := sckorok.Sprite.Comp(spin.Entity); comp != nil {
 		comp.SetSprite(tex)
 	}
 }
 
 func (spin *SpinObject) SetSize(w, h float32) {
-	if comp := korok.Sprite.Comp(spin.Entity); comp != nil {
+	if comp := sckorok.Sprite.Comp(spin.Entity); comp != nil {
 		comp.SetSize(w, h)
 	}
 }
 
 func (spin *SpinObject) SetPosition(x, y float32) {
-	if comp := korok.Transform.Comp(spin.Entity); comp != nil {
+	if comp := sckorok.Transform.Comp(spin.Entity); comp != nil {
 		comp.SetPosition(f32.Vec2{x, y})
 	}
 }
 
 type MainScene struct {
-	spin  *SpinObject
-	angle float32
+	spin *SpinObject
 }
 
 func (*MainScene) Load() {
@@ -84,10 +83,10 @@ func (*MainScene) OnExit() {
 }
 
 func main() {
-	options := &korok.Options{
+	options := &sckorok.Options{
 		Title:  "Script Demo",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(options, &MainScene{})
+	sckorok.Run(options, &MainScene{})
 }

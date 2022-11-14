@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/asset"
 	"sckorok/engi"
 	"sckorok/game"
@@ -16,56 +16,56 @@ type Block struct {
 }
 
 func NewBlock() Block {
-	e := korok.Entity.New()
+	e := sckorok.Entity.New()
 	b := Block{e}
-	korok.Sprite.NewComp(e)
-	korok.Transform.NewComp(e)
+	sckorok.Sprite.NewComp(e)
+	sckorok.Transform.NewComp(e)
 	return b
 }
 
 func (b *Block) SetTexture(tex gfx.Tex2D) {
-	korok.Sprite.Comp(b.Entity).SetSprite(tex)
+	sckorok.Sprite.Comp(b.Entity).SetSprite(tex)
 }
 
 func (b *Block) SetPosition(x, y float32) {
-	korok.Transform.Comp(b.Entity).SetPosition(f32.Vec2{x, y})
+	sckorok.Transform.Comp(b.Entity).SetPosition(f32.Vec2{x, y})
 }
 
 func (b *Block) SetSize(w, h float32) {
-	korok.Sprite.Comp(b.Entity).SetSize(w, h)
+	sckorok.Sprite.Comp(b.Entity).SetSize(w, h)
 }
 
 type Face struct {
 	engi.Entity
-	up, down, left, right Block
+	//up, down, left, right Block
 }
 
 func NewFace() *Face {
-	e := korok.Entity.New()
+	e := sckorok.Entity.New()
 	f := &Face{Entity: e}
-	korok.Sprite.NewComp(f.Entity)
-	korok.Transform.NewComp(f.Entity)
+	sckorok.Sprite.NewComp(f.Entity)
+	sckorok.Transform.NewComp(f.Entity)
 	return f
 }
 
 func (f *Face) SetTexture(tex gfx.Tex2D) {
-	korok.Sprite.Comp(f.Entity).SetSprite(tex)
+	sckorok.Sprite.Comp(f.Entity).SetSprite(tex)
 }
 
 func (f *Face) SetPosition(x, y float32) {
-	korok.Transform.Comp(f.Entity).SetPosition(f32.Vec2{x, y})
+	sckorok.Transform.Comp(f.Entity).SetPosition(f32.Vec2{x, y})
 }
 
 func (f *Face) SetSize(w, h float32) {
-	korok.Sprite.Comp(f.Entity).SetSize(w, h)
+	sckorok.Sprite.Comp(f.Entity).SetSize(w, h)
 }
 
 func (f *Face) LoadBlock(up, down, left, right Block) {
-	xf := korok.Transform.Comp(f.Entity)
-	b1 := korok.Transform.Comp(up.Entity)
-	b2 := korok.Transform.Comp(down.Entity)
-	b3 := korok.Transform.Comp(left.Entity)
-	b4 := korok.Transform.Comp(right.Entity)
+	xf := sckorok.Transform.Comp(f.Entity)
+	b1 := sckorok.Transform.Comp(up.Entity)
+	b2 := sckorok.Transform.Comp(down.Entity)
+	b3 := sckorok.Transform.Comp(left.Entity)
+	b4 := sckorok.Transform.Comp(right.Entity)
 
 	xf.LinkChildren(b1, b2, b3, b4)
 	b1.SetPosition(f32.Vec2{0, 100})
@@ -130,7 +130,7 @@ func (m *MainScene) Update(dt float32) {
 		x = 50
 	}
 
-	xf := korok.Transform.Comp(m.face.Entity)
+	xf := sckorok.Transform.Comp(m.face.Entity)
 	p := xf.Position()
 	x, y = x*dt+p[0], y*dt+p[1]
 	xf.SetPosition(f32.Vec2{x, y})
@@ -140,10 +140,10 @@ func (m *MainScene) OnExit() {
 }
 
 func main() {
-	options := &korok.Options{
+	options := &sckorok.Options{
 		Title:  "Node System",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(options, &MainScene{})
+	sckorok.Run(options, &MainScene{})
 }

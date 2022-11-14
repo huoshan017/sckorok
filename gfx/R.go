@@ -19,7 +19,7 @@ type Tex2D interface {
 type Anchor uint8
 
 const (
-	ANCHOR_CENTER Anchor = 0x00
+	ANCHOR_CENTER Anchor = iota
 	ANCHOR_LEFT          = 0x01
 	ANCHOR_RIGHT         = 0x02
 	ANCHOR_UP            = 0x04
@@ -37,7 +37,7 @@ type Region struct {
 }
 
 type bkTex struct {
-	id, padding uint16
+	id uint16
 }
 
 func (tex bkTex) Tex() uint16 {
@@ -173,9 +173,6 @@ type TexManager struct {
 
 	// name to id
 	names map[string]int
-
-	// index and capacity
-	index, cap uint16
 }
 
 // 纹理图集的管理是以纹理为单位.

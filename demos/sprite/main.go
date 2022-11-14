@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/asset"
 	"sckorok/game"
 	"sckorok/math/f32"
@@ -21,10 +21,10 @@ func (m *MainScene) OnEnter(g *game.Game) {
 	// show blocks
 	tex := asset.Texture.Get("block.png")
 	for i := 0; i < 800; i++ {
-		entity := korok.Entity.New()
-		korok.Sprite.NewCompX(entity, tex).SetSize(20, 20)
+		entity := sckorok.Entity.New()
+		sckorok.Sprite.NewCompX(entity, tex).SetSize(20, 20)
 
-		xf := korok.Transform.NewComp(entity)
+		xf := sckorok.Transform.NewComp(entity)
 
 		x := float32(rand.Intn(480))
 		y := float32(rand.Intn(200)) + 120
@@ -34,10 +34,10 @@ func (m *MainScene) OnEnter(g *game.Game) {
 	// show face
 	{
 		tex := asset.Texture.Get("face.png")
-		face := korok.Entity.New()
-		korok.Sprite.NewCompX(face, tex).SetSize(50, 50)
+		face := sckorok.Entity.New()
+		sckorok.Sprite.NewCompX(face, tex).SetSize(50, 50)
 
-		xf := korok.Transform.NewComp(face)
+		xf := sckorok.Transform.NewComp(face)
 		xf.SetPosition(f32.Vec2{100, 20})
 	}
 }
@@ -50,10 +50,10 @@ func (*MainScene) OnExit() {
 
 func main() {
 	// Run game
-	options := &korok.Options{
+	options := &sckorok.Options{
 		Title:  "Sprite Rendering",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(options, &MainScene{})
+	sckorok.Run(options, &MainScene{})
 }

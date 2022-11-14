@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/anim/ween"
 	"sckorok/asset"
 	"sckorok/audio"
@@ -154,7 +154,7 @@ func (sn *GameScene) OnEnter(g *game.Game) {
 	sn.sound.collision, _ = asset.Audio.Get("sound/collision.ogg")
 	sn.sound.swooshing, _ = asset.Audio.Get("sound/swooshing.ogg")
 
-	korok.Transform.Comp(sn.bird.Entity).SetPosition(f32.Vec2{80, 240})
+	sckorok.Transform.Comp(sn.bird.Entity).SetPosition(f32.Vec2{80, 240})
 	sn.bird.Vec2 = f32.Vec2{80, 240}
 
 	sn.ground.Vec2 = f32.Vec2{0, 100}
@@ -210,7 +210,7 @@ func (sn *GameScene) Update(dt float32) {
 	}
 
 	// update bird position
-	b := korok.Transform.Comp(sn.bird.Entity)
+	b := sckorok.Transform.Comp(sn.bird.Entity)
 	b.SetPosition(sn.bird.Vec2)
 	b.SetRotation(sn.bird.rotate)
 
@@ -225,7 +225,7 @@ func (sn *GameScene) Update(dt float32) {
 	sn.ground.Vec2[0] = x
 
 	// update ground shift
-	g := korok.Transform.Comp(sn.ground.Entity)
+	g := sckorok.Transform.Comp(sn.ground.Entity)
 	g.SetPosition(sn.ground.Vec2)
 
 	// update pipes
@@ -239,7 +239,7 @@ func (sn *GameScene) Update(dt float32) {
 
 			// stop bird animation
 			audio.PlayEffect(sn.sound.collision, 1)
-			korok.Flipbook.Comp(sn.bird.Entity).Stop()
+			sckorok.Flipbook.Comp(sn.bird.Entity).Stop()
 		}
 	}
 
@@ -253,7 +253,7 @@ func (sn *GameScene) Update(dt float32) {
 		if sn.bird.state != Dead {
 			sn.bird.state = Dead
 			audio.PlayEffect(sn.sound.collision, 1)
-			korok.Flipbook.Comp(sn.bird.Entity).Stop()
+			sckorok.Flipbook.Comp(sn.bird.Entity).Stop()
 		}
 
 		audio.PlayEffect(sn.sound.drop, 2)
@@ -303,8 +303,8 @@ func (sn *GameScene) reStart() {
 	sn.bird.Vec2 = f32.Vec2{80, 240}
 	sn.bird.vy = 0
 	sn.bird.rotate = 0
-	korok.Transform.Comp(sn.bird.Entity).SetRotation(0)
-	korok.Flipbook.Comp(sn.bird.Entity).Play("flying")
+	sckorok.Transform.Comp(sn.bird.Entity).SetRotation(0)
+	sckorok.Flipbook.Comp(sn.bird.Entity).Play("flying")
 	// pipes
 	sn.PipeSystem.Reset()
 	sn.PipeSystem.StartScroll()

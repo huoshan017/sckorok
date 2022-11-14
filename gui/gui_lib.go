@@ -97,7 +97,6 @@ type Context struct {
 	}
 
 	// sqNum should be same for  layout and drawing
-	sqNum int
 }
 
 func NewContext(style *Theme) *Context {
@@ -124,7 +123,6 @@ func (ctx *Context) Text(id ID, bb *Rect, text string, style *TextStyle) {
 		bb.H = sz[1]
 		ctx.DrawText(bb, text, style)
 	}
-	return
 }
 
 // Widgets: InputEditor

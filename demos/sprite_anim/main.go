@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/anim/frame"
 	"sckorok/asset"
 	"sckorok/engi"
@@ -13,7 +13,6 @@ import (
 
 type MainScene struct {
 	hero engi.Entity
-	g    *game.Game
 }
 
 func (*MainScene) Load() {
@@ -29,13 +28,13 @@ func (m *MainScene) OnEnter(g *game.Game) {
 	input.RegisterButton("left", input.ArrowLeft)
 	input.RegisterButton("right", input.ArrowRight)
 
-	hero := korok.Entity.New()
+	hero := sckorok.Entity.New()
 
 	// SpriteComp
-	korok.Sprite.NewComp(hero).SetSize(50, 50)
-	korok.Transform.NewComp(hero).SetPosition(f32.Vec2{240, 160})
+	sckorok.Sprite.NewComp(hero).SetSize(50, 50)
+	sckorok.Transform.NewComp(hero).SetPosition(f32.Vec2{240, 160})
 
-	fb := korok.Flipbook.NewComp(hero)
+	fb := sckorok.Flipbook.NewComp(hero)
 	fb.SetRate(.2)
 	fb.SetLoop(true, frame.Restart)
 
@@ -61,16 +60,16 @@ func (m *MainScene) Update(dt float32) {
 
 	// 根据上下左右，执行不同的帧动画
 	if input.Button("up").JustPressed() {
-		korok.Flipbook.Comp(m.hero).Play("hero.top")
+		sckorok.Flipbook.Comp(m.hero).Play("hero.top")
 	}
 	if input.Button("down").JustPressed() {
-		korok.Flipbook.Comp(m.hero).Play("hero.down")
+		sckorok.Flipbook.Comp(m.hero).Play("hero.down")
 	}
 	if input.Button("left").JustPressed() {
-		korok.Flipbook.Comp(m.hero).Play("hero.left")
+		sckorok.Flipbook.Comp(m.hero).Play("hero.left")
 	}
 	if input.Button("right").JustPressed() {
-		korok.Flipbook.Comp(m.hero).Play("hero.right")
+		sckorok.Flipbook.Comp(m.hero).Play("hero.right")
 	}
 
 	scalar := float32(3)
@@ -87,7 +86,7 @@ func (m *MainScene) Update(dt float32) {
 		speed[0] = scalar
 	}
 
-	xf := korok.Transform.Comp(m.hero)
+	xf := sckorok.Transform.Comp(m.hero)
 
 	x := xf.Position()[0] + speed[0]
 	y := xf.Position()[1] + speed[1]
@@ -99,10 +98,10 @@ func (*MainScene) OnExit() {
 
 func main() {
 	// Run game
-	options := &korok.Options{
+	options := &sckorok.Options{
 		Title:  "Hello, Korok Engine",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(options, &MainScene{})
+	sckorok.Run(options, &MainScene{})
 }

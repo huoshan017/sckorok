@@ -1,18 +1,16 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/anim"
 	"sckorok/anim/ween"
 	"sckorok/asset"
-	"sckorok/engi"
 	"sckorok/game"
 	"sckorok/math/ease"
 	"sckorok/math/f32"
 )
 
 type MainScene struct {
-	hero engi.Entity
 }
 
 func (*MainScene) Load() {
@@ -34,9 +32,9 @@ func (m *MainScene) OnEnter(g *game.Game) {
 	}
 
 	for i := range funcs {
-		entity := korok.Entity.New()
-		korok.Sprite.NewCompX(entity, tex).SetSize(30, 30)
-		korok.Transform.NewComp(entity).SetPosition(f32.Vec2{0, 50 + 30*float32(i)})
+		entity := sckorok.Entity.New()
+		sckorok.Sprite.NewCompX(entity, tex).SetSize(30, 30)
+		sckorok.Transform.NewComp(entity).SetPosition(f32.Vec2{0, 50 + 30*float32(i)})
 		anim.MoveX(entity, 10, 240).SetFunction(funcs[i]).SetRepeat(ween.RepeatInfinite, ween.Restart).SetDuration(2).Forward()
 	}
 }
@@ -49,10 +47,10 @@ func (*MainScene) OnExit() {
 
 func main() {
 	// Run game
-	options := &korok.Options{
+	options := &sckorok.Options{
 		Title:  "Hello, Korok Engine",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(options, &MainScene{})
+	sckorok.Run(options, &MainScene{})
 }

@@ -23,7 +23,7 @@ func (stack *StackAllocator) initialize(max int) {
 // Alloc alloc memory on the stack.
 func (stack *StackAllocator) Alloc(size int32) (ptr unsafe.Pointer) {
 	if req := stack.alloc + size; req < stack.cap {
-		ptr = unsafe.Pointer(stack.data + uintptr(stack.alloc))
+		ptr = unsafe.Pointer(stack.data + unsafe.Offsetof(stack.alloc))
 		stack.alloc += size
 	} else {
 		tmp := make([]byte, size)
@@ -38,12 +38,9 @@ func (stack *StackAllocator) Free(size int32) {
 	if stack.alloc < 0 {
 		stack.alloc = 0
 	}
-	return
 }
 
 // release will empty the stack each frame.
 func (stack *StackAllocator) release() {
 	stack.alloc = 0
 }
-
-

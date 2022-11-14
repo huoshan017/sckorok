@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/asset"
 	"sckorok/effect"
 	"sckorok/game"
@@ -22,20 +22,20 @@ func (*MainScene) OnEnter(g *game.Game) {
 			Max:      1024,
 			Rate:     10,
 			Duration: math.MaxFloat32,
-			Life:     effect.Var{40.1, 0.4},
-			Size:     effect.Range{effect.Var{10, 5}, effect.Var{20, 5}},
-			X:        effect.Var{0, 0}, Y: effect.Var{0, 0},
-			A: effect.Range{effect.Var{1, 0}, effect.Var{0, 0}},
+			Life:     effect.Var{Base: 40.1, Var: 0.4},
+			Size:     effect.Range{Start: effect.Var{Base: 10, Var: 5}, End: effect.Var{Base: 20, Var: 5}},
+			X:        effect.Var{Base: 0, Var: 0}, Y: effect.Var{Base: 0, Var: 0},
+			A: effect.Range{Start: effect.Var{Base: 1, Var: 0}, End: effect.Var{Base: 0, Var: 0}},
 		},
-		Speed:   effect.Var{70, 10},
-		Angel:   effect.Var{math.Radian(90), math.Radian(30)},
+		Speed:   effect.Var{Base: 70, Var: 10},
+		Angel:   effect.Var{Base: math.Radian(90), Var: math.Radian(30)},
 		Gravity: f32.Vec2{0, -10},
 	}
-	gravity := korok.Entity.New()
-	gParticle := korok.ParticleSystem.NewComp(gravity)
+	gravity := sckorok.Entity.New()
+	gParticle := sckorok.ParticleSystem.NewComp(gravity)
 	gParticle.SetSimulator(effect.NewGravitySimulator(cfg))
 	gParticle.SetTexture(asset.Texture.Get("particle.png"))
-	xf := korok.Transform.NewComp(gravity)
+	xf := sckorok.Transform.NewComp(gravity)
 	xf.SetPosition(f32.Vec2{240, 160})
 }
 
@@ -47,10 +47,10 @@ func (*MainScene) OnExit() {
 }
 
 func main() {
-	options := &korok.Options{
+	options := &sckorok.Options{
 		Title:  "ParticleSystem",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(options, &MainScene{})
+	sckorok.Run(options, &MainScene{})
 }

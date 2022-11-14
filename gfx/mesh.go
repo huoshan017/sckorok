@@ -18,7 +18,7 @@ type Mesh struct {
 
 	// res handle
 	textureId uint16
-	padding   uint16
+	//padding   uint16
 
 	IndexId  uint16
 	VertexId uint16
@@ -51,12 +51,12 @@ func (m *MeshComp) SetVisible(v bool) {
 }
 
 func (m *Mesh) Setup() {
-	mem_v := bk.Memory{unsafe.Pointer(&m.vertex[0]), uint32(len(m.vertex)) * 20}
+	mem_v := bk.Memory{Data: unsafe.Pointer(&m.vertex[0]), Size: uint32(len(m.vertex)) * 20}
 	if id, _ := bk.R.AllocVertexBuffer(mem_v, 20); id != bk.InvalidId {
 		m.VertexId = id
 	}
 
-	mem_i := bk.Memory{unsafe.Pointer(&m.index[0]), uint32(len(m.index)) * 2}
+	mem_i := bk.Memory{Data: unsafe.Pointer(&m.index[0]), Size: uint32(len(m.index)) * 2}
 	if id, _ := bk.R.AllocIndexBuffer(mem_i); id != bk.InvalidId {
 		m.IndexId = id
 	}
@@ -108,16 +108,6 @@ func (m *Mesh) Delete() {
 // 位置不同，比如满屏的子弹
 // 或许可以通过工厂来构建mesh，这样自动把重复的mesh丢弃
 // mesh 数量最终 <= 精灵的数量
-var vertices = []float32{
-	// Pos      // Tex
-	0.0, 1.0, 0.0, 1.0,
-	1.0, 0.0, 1.0, 0.0,
-	0.0, 0.0, 0.0, 0.0,
-
-	0.0, 1.0, 0.0, 1.0,
-	1.0, 1.0, 1.0, 1.0,
-	1.0, 0.0, 1.0, 0.0,
-}
 
 type MeshTable struct {
 	comps      []MeshComp
@@ -209,10 +199,14 @@ type MeshRenderFeature struct {
 // 此处初始化所有的依赖
 func (f *MeshRenderFeature) Register(rs *RenderSystem) {
 	// init render
+	var b bool
 	for _, r := range rs.RenderList {
 		switch br := r.(type) {
 		case *MeshRender:
 			f.R = br
+			b = true
+		}
+		if b {
 			break
 		}
 	}

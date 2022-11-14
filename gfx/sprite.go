@@ -198,10 +198,14 @@ func (f *SpriteRenderFeature) SetTable(st *SpriteTable, xt *TransformTable) {
 // 此处初始化所有的依赖
 func (f *SpriteRenderFeature) Register(rs *RenderSystem) {
 	// init render
+	var b bool
 	for _, r := range rs.RenderList {
 		switch br := r.(type) {
 		case *BatchRender:
 			f.R = br
+			b = true
+		}
+		if b {
 			break
 		}
 	}

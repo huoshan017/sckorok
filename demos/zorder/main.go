@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/asset"
 	"sckorok/effect"
 	"sckorok/engi"
@@ -38,13 +38,13 @@ func (m *MainScene) OnEnter(g *game.Game) {
 
 	// face variable z-order 0-9
 	{
-		face := korok.Entity.New()
+		face := sckorok.Entity.New()
 
 		tex := asset.Texture.Get("face.png")
-		sprite := korok.Sprite.NewCompX(face, tex)
+		sprite := sckorok.Sprite.NewCompX(face, tex)
 		sprite.SetSize(50, 50)
 
-		blockXF := korok.Transform.NewComp(face)
+		blockXF := sckorok.Transform.NewComp(face)
 		blockXF.SetPosition(f32.Vec2{200, 80})
 
 		m.face = face
@@ -52,12 +52,12 @@ func (m *MainScene) OnEnter(g *game.Game) {
 
 	// blocks z-order: [0, 7]
 	for i := 0; i < 8; i++ {
-		block := korok.Entity.New()
-		sprite := korok.Sprite.NewCompX(block, tex)
+		block := sckorok.Entity.New()
+		sprite := sckorok.Sprite.NewCompX(block, tex)
 		sprite.SetSize(30, 30)
 		sprite.SetZOrder(int16(i))
 
-		xf := korok.Transform.NewComp(block)
+		xf := sckorok.Transform.NewComp(block)
 		x := float32(i*40) + 80
 		y := float32(200)
 		xf.SetPosition(f32.Vec2{x, y})
@@ -65,15 +65,15 @@ func (m *MainScene) OnEnter(g *game.Game) {
 
 	// text z-order: 6
 	{
-		hello := korok.Entity.New()
-		text := korok.Text.NewComp(hello)
+		hello := sckorok.Entity.New()
+		text := sckorok.Text.NewComp(hello)
 		text.SetFont(fnt)
 		text.SetFontSize(18)
 		text.SetColor(gfx.Red)
 		text.SetText("Hello World")
 		text.SetZOrder(6)
 
-		xf := korok.Transform.NewComp(hello)
+		xf := sckorok.Transform.NewComp(hello)
 		xf.SetPosition(f32.Vec2{240, 240})
 		xf.RotateBy(.57)
 	}
@@ -85,20 +85,20 @@ func (m *MainScene) OnEnter(g *game.Game) {
 				Max:      1024,
 				Rate:     10,
 				Duration: math.MaxFloat32,
-				Life:     effect.Var{40.1, 0.4},
-				Size:     effect.Range{effect.Var{10, 5}, effect.Var{20, 5}},
-				X:        effect.Var{0, 0}, Y: effect.Var{0, 0},
-				A: effect.Range{effect.Var{1, 0}, effect.Var{0, 0}},
+				Life:     effect.Var{Base: 40.1, Var: 0.4},
+				Size:     effect.Range{Start: effect.Var{Base: 10, Var: 5}, End: effect.Var{Base: 20, Var: 5}},
+				X:        effect.Var{Base: 0, Var: 0}, Y: effect.Var{Base: 0, Var: 0},
+				A: effect.Range{Start: effect.Var{Base: 1, Var: 0}, End: effect.Var{Base: 0, Var: 0}},
 			},
-			Speed:   effect.Var{70, 10},
-			Angel:   effect.Var{math.Radian(90), math.Radian(30)},
+			Speed:   effect.Var{Base: 70, Var: 10},
+			Angel:   effect.Var{Base: math.Radian(90), Var: math.Radian(30)},
 			Gravity: f32.Vec2{0, -10},
 		}
-		gravity := korok.Entity.New()
-		gParticle := korok.ParticleSystem.NewComp(gravity)
+		gravity := sckorok.Entity.New()
+		gParticle := sckorok.ParticleSystem.NewComp(gravity)
 		gParticle.SetSimulator(effect.NewGravitySimulator(cfg))
 		gParticle.SetTexture(asset.Texture.Get("particle.png"))
-		xf := korok.Transform.NewComp(gravity)
+		xf := sckorok.Transform.NewComp(gravity)
 		xf.SetPosition(f32.Vec2{40, 160})
 	}
 
@@ -124,11 +124,11 @@ func (m *MainScene) Update(dt float32) {
 	}
 
 	if input.Button("Order").JustPressed() {
-		korok.Sprite.Comp(m.face).SetZOrder(orderList[index%10])
+		sckorok.Sprite.Comp(m.face).SetZOrder(orderList[index%10])
 		index++
 	}
 
-	xf := korok.Transform.Comp(m.face)
+	xf := sckorok.Transform.Comp(m.face)
 
 	x := xf.Position()[0] + speed[0]
 	y := xf.Position()[1] + speed[1]
@@ -141,10 +141,10 @@ func (*MainScene) OnExit() {
 
 func main() {
 	// Run game
-	options := &korok.Options{
+	options := &sckorok.Options{
 		Title:  "Hello, Korok Engine",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(options, &MainScene{})
+	sckorok.Run(options, &MainScene{})
 }

@@ -22,7 +22,7 @@ const (
 type FlagCorner uint32
 
 const (
-	FlagCornerNone        FlagCorner = 0x0000
+	FlagCornerNone        FlagCorner = iota
 	FlagCornerTopLeft                = 0x0001
 	FlagCornerTopRight               = 0x0002
 	FlagCornerBottomRight            = 0x0004
@@ -67,7 +67,6 @@ type DrawList struct {
 	VtxBuffer []DrawVert
 
 	cmdIndex, idxIndex, vtxIndex int
-	cmdCap, idxCap, vtxCap       int
 
 	// Data *DrawListSharedData
 	OwnerName     string // 窗口名

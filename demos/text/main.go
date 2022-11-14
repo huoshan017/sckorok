@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/asset"
 	"sckorok/game"
 	"sckorok/gfx/font"
@@ -20,13 +20,13 @@ func (*MainScene) OnEnter(g *game.Game) {
 	font, _ := asset.Font.Get("font1")
 
 	// show "Hello world"
-	entity := korok.Entity.New()
+	entity := sckorok.Entity.New()
 
-	text := korok.Text.NewComp(entity)
+	text := sckorok.Text.NewComp(entity)
 	text.SetFont(font)
 	text.SetText("Hello Korok!")
 
-	xf := korok.Transform.NewComp(entity)
+	xf := sckorok.Transform.NewComp(entity)
 	xf.SetPosition(f32.Vec2{240, 160})
 }
 
@@ -38,10 +38,10 @@ func (*MainScene) OnExit() {
 }
 
 func main() {
-	options := korok.Options{
+	options := sckorok.Options{
 		Title:  "Text Rendering",
 		Width:  480,
 		Height: 320,
 	}
-	korok.Run(&options, &MainScene{})
+	sckorok.Run(&options, &MainScene{})
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	korok "sckorok"
+	"sckorok"
 	"sckorok/anim"
 	"sckorok/asset"
 	"sckorok/engi"
@@ -64,22 +64,22 @@ func (sn *StartScene) OnEnter(g *game.Game) {
 
 	// setup bg
 	{
-		entity := korok.Entity.New()
-		spr := korok.Sprite.NewCompX(entity, bg)
+		entity := sckorok.Entity.New()
+		spr := sckorok.Sprite.NewCompX(entity, bg)
 		spr.SetSize(320, 480)
-		xf := korok.Transform.NewComp(entity)
+		xf := sckorok.Transform.NewComp(entity)
 		xf.SetPosition(f32.Vec2{160, 240})
 		sn.bg = entity
 	}
 
 	// setup ground {840 281}
 	{
-		entity := korok.Entity.New()
-		spr := korok.Sprite.NewCompX(entity, ground)
+		entity := sckorok.Entity.New()
+		spr := sckorok.Sprite.NewCompX(entity, ground)
 		spr.SetSize(420, 140)
 		spr.SetGravity(0, 1)
 		spr.SetZOrder(1)
-		xf := korok.Transform.NewComp(entity)
+		xf := sckorok.Transform.NewComp(entity)
 		xf.SetPosition(f32.Vec2{0, 100})
 		sn.ground = entity
 	}
@@ -93,14 +93,14 @@ func (sn *StartScene) OnEnter(g *game.Game) {
 	g.AnimationSystem.SpriteEngine.NewAnimation("flying", frames, true)
 
 	// setup bird
-	bird := korok.Entity.New()
-	spr := korok.Sprite.NewCompX(bird, bird1)
+	bird := sckorok.Entity.New()
+	spr := sckorok.Sprite.NewCompX(bird, bird1)
 	spr.SetSize(48, 32)
 	spr.SetZOrder(2)
-	xf := korok.Transform.NewComp(bird)
+	xf := sckorok.Transform.NewComp(bird)
 	xf.SetPosition(f32.Vec2{160, 240})
 
-	anim := korok.Flipbook.NewComp(bird)
+	anim := sckorok.Flipbook.NewComp(bird)
 	anim.SetRate(.1)
 	anim.Play("flying")
 
@@ -135,15 +135,15 @@ func (sn *StartScene) LoadGame() {
 	gsn.borrow(sn.bird, sn.bg, sn.ground)
 
 	// load game scene
-	korok.SceneMan.Load(gsn)
-	korok.SceneMan.Push(gsn)
+	sckorok.SceneMan.Load(gsn)
+	sckorok.SceneMan.Push(gsn)
 }
 
 func main() {
-	options := korok.Options{
+	options := sckorok.Options{
 		Title:  "Flappy Bird",
 		Width:  320,
 		Height: 480,
 	}
-	korok.Run(&options, &StartScene{})
+	sckorok.Run(&options, &StartScene{})
 }

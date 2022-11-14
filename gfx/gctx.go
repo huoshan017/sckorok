@@ -87,7 +87,7 @@ func (ctx *context) newVertexBuffer(vertexSize, stride int) tempBuffer {
 		vertexSize++
 	}
 	tb := tempBuffer{size: vertexSize, stride: stride, use: 1}
-	if id, vb := bk.R.AllocVertexBuffer(bk.Memory{nil, uint32(vertexSize * stride)}, uint16(stride)); id != bk.InvalidId {
+	if id, vb := bk.R.AllocVertexBuffer(bk.Memory{Data: nil, Size: uint32(vertexSize * stride)}, uint16(stride)); id != bk.InvalidId {
 		tb.id = id
 		tb.vb = vb
 	}
@@ -134,7 +134,7 @@ func (ctx *context) initIndexBuffer() {
 		iFormat[4] += 4
 		iFormat[5] += 4
 	}
-	if id, _ := bk.R.AllocIndexBuffer(bk.Memory{unsafe.Pointer(&ctx.shared.index[0]), uint32(size) * 2}); id != bk.InvalidId {
+	if id, _ := bk.R.AllocIndexBuffer(bk.Memory{Data: unsafe.Pointer(&ctx.shared.index[0]), Size: uint32(size) * 2}); id != bk.InvalidId {
 		ctx.shared.id = id
 		ctx.shared.size = size
 	}
