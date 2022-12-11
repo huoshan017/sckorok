@@ -126,11 +126,11 @@ func (sn *StartScene) OnExit() {
 
 func (sn *StartScene) fadeOut() {
 	anim.OfColor(&sn.mask, gfx.Transparent, gfx.White).SetFunction(ease.InOutSine).SetDuration(1).OnComplete(func(reverse bool) {
-		sn.LoadGame()
+		sn.loadGame()
 	}).Forward()
 }
 
-func (sn *StartScene) LoadGame() {
+func (sn *StartScene) loadGame() {
 	gsn := &GameScene{}
 	gsn.borrow(sn.bird, sn.bg, sn.ground)
 

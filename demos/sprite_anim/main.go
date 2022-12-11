@@ -4,7 +4,6 @@ import (
 	"sckorok"
 	"sckorok/anim/frame"
 	"sckorok/asset"
-	"sckorok/engi"
 	"sckorok/game"
 	"sckorok/gfx"
 	"sckorok/hid/input"
@@ -12,7 +11,8 @@ import (
 )
 
 type MainScene struct {
-	hero engi.Entity
+	heroAnim      *frame.FlipbookComp
+	heroTransform *gfx.Transform
 }
 
 func (*MainScene) Load() {
@@ -37,8 +37,9 @@ func (m *MainScene) OnEnter(g *game.Game) {
 	fb := sckorok.Flipbook.NewComp(hero)
 	fb.SetRate(.2)
 	fb.SetLoop(true, frame.Restart)
+	m.heroAnim = fb
+	m.heroTransform = sckorok.Transform.Comp(hero)
 
-	m.hero = hero
 	{
 		at, _ := asset.Texture.Atlas("hero.png")
 		frames := [12]gfx.Tex2D{}
@@ -52,7 +53,7 @@ func (m *MainScene) OnEnter(g *game.Game) {
 	}
 
 	// default
-	fb.Play("hero.down")
+	m.heroAnim.Play("hero.down")
 }
 
 func (m *MainScene) Update(dt float32) {
@@ -60,16 +61,16 @@ func (m *MainScene) Update(dt float32) {
 
 	// 根据上下左右，执行不同的帧动画
 	if input.Button("up").JustPressed() {
-		sckorok.Flipbook.Comp(m.hero).Play("hero.top")
+		m.heroAnim.Play("hero.top")
 	}
 	if input.Button("down").JustPressed() {
-		sckorok.Flipbook.Comp(m.hero).Play("hero.down")
+		m.heroAnim.Play("hero.down")
 	}
 	if input.Button("left").JustPressed() {
-		sckorok.Flipbook.Comp(m.hero).Play("hero.left")
+		m.heroAnim.Play("hero.left")
 	}
 	if input.Button("right").JustPressed() {
-		sckorok.Flipbook.Comp(m.hero).Play("hero.right")
+		m.heroAnim.Play("hero.right")
 	}
 
 	scalar := float32(3)
@@ -86,11 +87,9 @@ func (m *MainScene) Update(dt float32) {
 		speed[0] = scalar
 	}
 
-	xf := sckorok.Transform.Comp(m.hero)
-
-	x := xf.Position()[0] + speed[0]
-	y := xf.Position()[1] + speed[1]
-	xf.SetPosition(f32.Vec2{x, y})
+	x := m.heroTransform.Position()[0] + speed[0]
+	y := m.heroTransform.Position()[1] + speed[1]
+	m.heroTransform.SetPosition(f32.Vec2{x, y})
 }
 
 func (*MainScene) OnExit() {
